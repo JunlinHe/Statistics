@@ -42,11 +42,11 @@
         <!--configLocation属性指定mybatis的核心配置文件-->
         <property name="configLocation" value="classpath:SqlMapConfig.xml"/>
         <!-- 所有配置的mapper文件 -->
-        <property name="mapperLocations" value="classpath*:com/sky/statistics/mapper/*.xml"/>
+        <property name="mapperLocations" value="classpath*:com/sky/statistics/web/mapper/*.xml"/>
     </bean>
     <!-- spring与mybatis整合配置，扫描所有dao -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.sky.statistics.dao"/>
+        <property name="basePackage" value="com.sky.statistics.web.dao"/>
     </bean>
 
     <!-- 事务管理 通知 -->
@@ -66,7 +66,7 @@
 
     <!-- 事务 aop 配置 -->
     <aop:config>
-        <aop:pointcut id="serviceMethods" expression="execution(* com.sky.statistics.service..*(..))"/>
+        <aop:pointcut id="serviceMethods" expression="execution(* com.sky.statistics.web.service..*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
     </aop:config>
 
