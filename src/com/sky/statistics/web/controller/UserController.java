@@ -3,15 +3,17 @@ package com.sky.statistics.web.controller;
 import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/user")
@@ -20,8 +22,11 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    /**
+     * 查询所有用户
+     * */
     @RequestMapping("/list")
-    public ModelAndView selectall(HttpServletRequest request,HttpServletResponse response){
+    public ModelAndView selectall(){
         List<User> user=userService.selectUsers("%%");
         System.out.println("小何");
         System.out.println(user);
@@ -30,30 +35,71 @@ public class UserController {
         return mav;
     }
 
-    @RequestMapping("/register")
-    public ModelAndView insert(HttpServletRequest request,HttpServletResponse response){
-        String id = request.getParameter("id");
-        System.out.println("id: "+id);
-        ModelAndView mav=new ModelAndView("register");
-        mav.addObject("result","你提交的ID："+id);
-        return mav;
-    }
-
-    @RequestMapping(value="/register1",method= RequestMethod.POST)
-    public String insertUser(HttpServletResponse response, User us)
+    /**
+     * 注册
+     * */
+    @RequestMapping(value="/register",method= RequestMethod.POST)
+    @ResponseBody
+    public Map<String,Object> insertUser(@Valid User us, BindingResult result)
     {
-
-        Date now = new Date();
-        us.setLastLoginTime(now);
-        us.setCreator("me");
-        us.setCreateTime(now);
+        //返回操作状态码
+        Map<String,Object> map = new HashMap<String,Object>();
+        if (result.hasErrors()) {
+            map.put("code", "-1");
+            return map;
+        }
 
         System.out.println(us.getUserName());
 
+        //持久化
         int i = userService.insert(us);
 
-        System.out.println("操作状态："+i);
-        return null;
+        if(i>0)
+            map.put("code", "1");//操作成功
+        else
+            map.put("code", "0");//操作失败
+
+        return map;
+    }
+
+    /**
+     * 登录
+     * */
+    @RequestMapping(value="/login",method= RequestMethod.POST)
+    @ResponseBody
+    public Map<String,Object> login(@Valid User us, BindingResult result)
+    {
+        //返回操作状态码
+        Map<String,Object> map = new HashMap<String,Object>();
+
+        if (result.hasErrors()) {
+            map.put("code", "-1");
+            return map;
+        }
+
+        //持久化
+        User user = userService.authentication(us);
+
+
+        if(user.getId()>0)
+            map.put("code", "1");//操作成功
+        else
+            map.put("code", "0");//操作失败
+
+        return map;
+    }
+
+
+
+
+    @RequestMapping(value="/json",method= RequestMethod.POST)
+    @ResponseBody//将内容或对象作为 HTTP 响应正文返回，使用@ResponseBody将会跳过视图处理部分，而是调用适合HttpMessageConverter，将返回值写入输出流。
+    public Map<String,Object> testJson(@RequestParam Long id){
+
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("code", id);
+        System.out.println("操作状态："+id);
+        return map;
     }
 
     @RequestMapping("/test")

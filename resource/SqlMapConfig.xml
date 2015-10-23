@@ -53,6 +53,7 @@
     <typeAliases>
         <!--别名对应xml中的resultType-->
         <typeAlias alias="User" type="com.sky.statistics.web.model.User"/>
+        <typeAlias alias="UserLog" type="com.sky.statistics.web.model.UserLog"/>
         <typeAlias alias="Article" type="com.sky.statistics.web.model.Article"/>
     </typeAliases>
 </configuration>

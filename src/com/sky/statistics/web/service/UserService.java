@@ -10,5 +10,7 @@ import java.util.List;
  */
 public interface UserService extends GenericService<User, Long>{
 
+    User authentication(User record);
+
     List<User> selectUsers(String username);
 }

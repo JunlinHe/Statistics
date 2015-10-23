@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sky.statistics.web.dao.IUserLogMapper">
+
+	<!--插入字段-->
+	<sql id="insertColumn">
+		user_id, user_serial_num, log_info, log_time, ip, method_name, model_name
+	</sql>
+
+	<!--基本返回字段-->
+	<sql id="baseColumnList">
+		id, <include refid="insertColumn" />
+	</sql>
+
+	<!-- 为了返回list 类型而定义的returnMap -->
+	<resultMap type="com.sky.statistics.web.model.UserLog" id="resultListUserLog">
+		<id column="id" property="id" />
+		<result column="user_serial_num" property="userSerialNum" />
+		<result column="log_info" property="logInfo" />
+		<result column="log_time" property="logTime" />
+		<result column="ip" property="IP" />
+		<result column="method_name" property="methodName" />
+		<result column="model_name" property="modelName" />
+		<!-- 关联 User-->
+		<!--<result column="user_id" property="userID" />-->
+		<association column="user_id" property="userID" javaType="com.sky.statistics.web.model.User" resultMap="resultListUser"/>
+	</resultMap>
+	<resultMap type="com.sky.statistics.web.model.User" id="resultListUser">
+		<id column="id" property="id" />
+		<result column="username" property="userName" />
+		<result column="password" property="password" />
+		<result column="serial_number" property="serialNumber" />
+		<result column="imei" property="IMEI" />
+		<result column="salt" property="salt" />
+		<result column="age" property="age" />
+		<result column="address" property="address" />
+		<result column="company" property="company" />
+		<result column="phone" property="phone" />
+		<result column="ip" property="IP" />
+		<result column="client" property="client" />
+		<result column="last_login_time" property="lastLoginTime" />
+		<result column="head_url" property="headURL" />
+		<result column="creator" property="creator" />
+		<result column="create_time" property="createTime" />
+		<result column="dsc" property="dsc" />
+	</resultMap>
+	<!-- 返回list 的select 语句，注意 resultMap 的值是指向前面定义好的 -->
+	<select id="selectUserLog" parameterType="java.lang.Long" resultMap="resultListUserLog">
+		select usl.id, usl.user_id, usl.user_serial_num,usl.log_info, usl.log_time, usl.ip, usl.method_name, usl.model_name,
+		us.id, us.username, us.password,us.serial_number
+		from tbl_user_log usl left outer join tbl_user us
+		on usl.user_id = us.id
+		where usl.user_id=${userID}
+	</select>
+
+	<!--通过主键查询-->
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="com.sky.statistics.web.model.UserLog">
+		select <include refid="baseColumnList" />
+		from tbl_user_log
+		where id = #{id}
+	</select>
+
+	<insert id="insertSelective" parameterType="com.sky.statistics.web.model.UserLog"
+			useGeneratedKeys="true"	keyProperty="id">
+		insert into
+		tbl_user_log(<include refid="insertColumn" />)
+		values(#{userID},#{userSerialNum},#{logInfo},#{logTime},#{IP},#{methodName},#{modelName})
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.sky.statistics.web.model.UserLog" >
+        update tbl_user_log set
+        user_id=#{userID},serial_number=#{serialNumber},log_info=#{logInfo},log_time=#{logTime},ip=#{IP},method_name=#{methodName} ,model_name=#{modelName}
+        where id=#{id}
+    </update>
+    
+    <delete id="deleteByPrimaryKey" parameterType="Long">
+        delete from tbl_user_log where id=#{id}
+    </delete>
+
+	<delete id="deleteByUserID" parameterType="Long">
+		delete from tbl_user_log where user_id=#{userID}
+	</delete>
+
+</mapper>

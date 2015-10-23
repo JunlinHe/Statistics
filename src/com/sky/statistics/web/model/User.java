@@ -1,132 +1,197 @@
 package com.sky.statistics.web.model;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 public class User {
-	private Long id;
-	private String userName;
-	private String password;
-	private String age;
-	private String address;
-	private String company;
-	private String phone;
-	private String IP;
-	private String client;
-	private Date lastLoginTime;
-	private String headURL;
-	private String creator;
-	private Date createTime;
-	private String dsc;
+    private Long id;
+    @NotNull(message="名字不能为空")
+    private String userName;
+    @Size(min=8, max=16,message="密码长度8~16位")
+    private String password;
+    private String serialNumber;
+    private String IMEI;
+    @Max(value=150,message="年龄最大不能超过150")
+    private String salt;
+    private int age;
+    private String address;
+    private String company;
+    private String phone;
+    private String IP;
+    private String client;
+    private Date lastLoginTime;
+    private String headURL;
+    private String creator;
+    private Date createTime;
+    private String dsc;
 
-	public Long getId() {
-		return id;
-	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public User() {
+    }
 
-	public String getUserName() {
-		return userName;
-	}
+    public User(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getUserName() {
+        return userName;
+    }
 
-	public String getAge() {
-		return age;
-	}
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
-	public void setAge(String age) {
-		this.age = age;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public String getSerialNumber() {
+        return serialNumber;
+    }
 
-	public String getCompany() {
-		return company;
-	}
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
 
-	public void setCompany(String company) {
-		this.company = company;
-	}
+    public String getIMEI() {
+        return IMEI;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    public void setIMEI(String IMEI) {
+        this.IMEI = IMEI;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public int getAge() {
+        return age;
+    }
 
-	public String getIP() {
-		return IP;
-	}
+    public void setAge(int age) {
+        this.age = age;
+    }
 
-	public void setIP(String IP) {
-		this.IP = IP;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public String getClient() {
-		return client;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public void setClient(String client) {
-		this.client = client;
-	}
+    public String getCompany() {
+        return company;
+    }
 
-	public Date getLastLoginTime() {
-		return lastLoginTime;
-	}
+    public void setCompany(String company) {
+        this.company = company;
+    }
 
-	public void setLastLoginTime(Date lastLoginTime) {
-		this.lastLoginTime = lastLoginTime;
-	}
+    public String getPhone() {
+        return phone;
+    }
 
-	public String getHeadURL() {
-		return headURL;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	public void setHeadURL(String headURL) {
-		this.headURL = headURL;
-	}
+    public String getIP() {
+        return IP;
+    }
 
-	public String getCreator() {
-		return creator;
-	}
+    public void setIP(String IP) {
+        this.IP = IP;
+    }
 
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
+    public String getClient() {
+        return client;
+    }
 
-	public Date getCreateTime() {
-		return createTime;
-	}
+    public void setClient(String client) {
+        this.client = client;
+    }
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+    public Date getLastLoginTime() {
+        return lastLoginTime;
+    }
 
-	public String getDsc() {
-		return dsc;
-	}
+    public void setLastLoginTime(Date lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
+    }
 
-	public void setDsc(String dsc) {
-		this.dsc = dsc;
-	}
+    public String getHeadURL() {
+        return headURL;
+    }
+
+    public void setHeadURL(String headURL) {
+        this.headURL = headURL;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getDsc() {
+        return dsc;
+    }
+
+    public void setDsc(String dsc) {
+        this.dsc = dsc;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", serialNumber='" + serialNumber + '\'' +
+                ", IMEI='" + IMEI + '\'' +
+                ", salt='" + salt + '\'' +
+                ", age=" + age +
+                ", address='" + address + '\'' +
+                ", company='" + company + '\'' +
+                ", phone='" + phone + '\'' +
+                ", IP='" + IP + '\'' +
+                ", client='" + client + '\'' +
+                ", lastLoginTime=" + lastLoginTime +
+                ", headURL='" + headURL + '\'' +
+                ", creator='" + creator + '\'' +
+                ", createTime=" + createTime +
+                ", dsc='" + dsc + '\'' +
+                '}';
+    }
 }

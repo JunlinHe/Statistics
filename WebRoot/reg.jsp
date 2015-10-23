@@ -8,10 +8,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title></title>
+    <title>测试</title>
+
+    <script type="text/javascript" src="app/lib/jquery.js"></script>
 </head>
 <body>
-<form method="post" action="user/register1">
+<form id="regForm">
   <label for="userName">姓名</label>
   <input type="text" id="userName" name="userName">
   <br>
@@ -42,7 +44,55 @@
   <label for="dsc">描述</label>
   <input type="text" id="dsc" name="dsc" value="213">
   <br>
-  <input type="submit" value="提交">
+  <input type="button" id="submitForm" value="提交">
 </form>
+
+<form id="loginForm">
+    <label for="loginID">ID</label>
+    <input type="text" id="loginID" name="id" value="213">
+</form>
+
+<input type="button" id="getJson" value="获取json">
+<div id="display"></div>
+<script>
+  $(function(){
+      $('#submitForm').on('click',function(){
+          var data = $('#regForm').serialize();
+          console.log(data)
+          $.ajax({
+              url:'user/register',
+              data:data,
+              dataType:'json',
+              type:'post',
+              //contentType:'application/json;charset=UTF-8',
+              success:function(data){
+                  console.log(data);
+                  $('#display').html(JSON.stringify(data));
+              }
+          });
+
+      });
+
+
+        $('#getJson').on('click',function(){
+            var data = $('#loginForm').serialize();
+            console.log(data)
+          $.ajax({
+              url:'user/json',
+              data:data,
+              dataType:'json',
+              type:'post',
+              //contentType:'application/json;charset=UTF-8',
+              success:function(data){
+                  console.log(data);
+                  $('#display').html(JSON.stringify(data));
+              }
+          });
+
+        });
+
+  });
+</script>
+
 </body>
 </html>
