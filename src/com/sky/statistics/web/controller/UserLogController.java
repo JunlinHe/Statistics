@@ -1,5 +1,6 @@
 package com.sky.statistics.web.controller;
 
+import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserLog;
 import com.sky.statistics.web.service.UserLogService;
 import org.springframework.stereotype.Controller;
@@ -27,11 +28,14 @@ public class UserLogController {
      * */
     @RequestMapping("/list")
     public ModelAndView selectUserLog(){
-        List<UserLog> userLog = userLogService.selectUserLog(1L);
+        User us = new User();
+        us.setId(1L);
+        List<UserLog> ul = userLogService.selectUserLog(us);
+//        UserLog ul = userLogService.selectById(1L);
         System.out.println("小何");
-        System.out.println(userLog);
+        System.out.println(ul);
         ModelAndView mav=new ModelAndView("list");
-        mav.addObject("userLog",userLog);
+        mav.addObject("userLog",ul);
         return mav;
     }
 

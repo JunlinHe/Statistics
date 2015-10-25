@@ -24,7 +24,7 @@
         <setting name="autoMappingBehavior" value="PARTIAL"/>
 
         <!-- 对于批量更新操作缓存SQL以提高性能 BATCH,SIMPLE -->
-        <!-- <setting name="defaultExecutorType" value="BATCH" /> -->
+         <setting name="defaultExecutorType" value="BATCH" />
 
         <!-- 数据库超过25000秒仍未响应则超时 -->
         <!-- <setting name="defaultStatementTimeout" value="25000" /> -->
@@ -54,6 +54,5 @@
         <!--别名对应xml中的resultType-->
         <typeAlias alias="User" type="com.sky.statistics.web.model.User"/>
         <typeAlias alias="UserLog" type="com.sky.statistics.web.model.UserLog"/>
-        <typeAlias alias="Article" type="com.sky.statistics.web.model.Article"/>
     </typeAliases>
 </configuration>

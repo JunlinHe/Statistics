@@ -18,7 +18,7 @@
   <input type="text" id="userName" name="userName">
   <br>
   <label for="password">密码</label>
-  <input type="password" id="password" name="password">
+  <input type="password" id="password" name="password" value="12345678">
   <br>
   <label for="age">年龄</label>
   <input type="number" id="age" name="age" value="19">

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface UserLogService extends GenericService<UserLog, Long>{
 
-    List<UserLog> selectUserLog(Long userID);
+    List<UserLog> selectUserLog(User userID);
 
-    int deleteByUserID(Long userID);
+    int deleteByUserID(User userID);
 }

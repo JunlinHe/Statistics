@@ -37,18 +37,14 @@
 
 	<!-- 返回list 的select 语句，注意 resultMap 的值是指向前面定义好的 -->
 	<select id="selectUsers" parameterType="java.lang.String" resultMap="resultListUser">
-		select
-		<include refid="baseColumnList" />
-		from
-		tbl_user
-		where userName like #{userName}
+		select <include refid="baseColumnList" />
+		from tbl_user
+		where username like #{userName}
 	</select>
 	<!--通过主键查询-->
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="com.sky.statistics.web.model.User">
-		select
-		<include refid="baseColumnList" />
-		from
-		tbl_user
+		select <include refid="baseColumnList" />
+		from tbl_user
 		where id = #{id}
 	</select>
 
@@ -74,11 +70,9 @@
 
 
 	<!--登录验证-->
-	<select id="authentication" parameterType="com.sky.statistics.web.model.User" resultMap="com.sky.statistics.web.model.User">
-		select
-		<include refid="baseColumnList" />
-		from
-		tbl_user
+	<select id="authentication" parameterType="com.sky.statistics.web.model.User" resultMap="resultListUser">
+		select <include refid="baseColumnList" />
+		from tbl_user
 		where username = #{record.userName} and password = #{record.password}
 	</select>
 

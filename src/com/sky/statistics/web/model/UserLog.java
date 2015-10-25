@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class UserLog {
     private Long id;
-    private User userID;
+    private User user;
     private String userSerialNum;
     private String logInfo;
     private Date logTime;
@@ -24,12 +24,12 @@ public class UserLog {
         this.id = id;
     }
 
-    public User getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserID(User userID) {
-        this.userID = userID;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getUserSerialNum() {

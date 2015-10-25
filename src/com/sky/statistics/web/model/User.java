@@ -7,13 +7,13 @@ import java.util.Date;
 
 public class User {
     private Long id;
-    @NotNull(message="名字不能为空")
+//    @NotNull(message="名字不能为空")
     private String userName;
-    @Size(min=8, max=16,message="密码长度8~16位")
+//    @Size(min=8, max=16,message="密码长度8~16位")
     private String password;
     private String serialNumber;
     private String IMEI;
-    @Max(value=150,message="年龄最大不能超过150")
+//    @Max(value=150,message="年龄最大不能超过150")
     private String salt;
     private int age;
     private String address;

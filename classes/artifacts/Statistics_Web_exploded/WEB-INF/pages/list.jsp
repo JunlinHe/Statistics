@@ -28,7 +28,7 @@
     </c:forEach>
 
     <c:forEach items="${userLog}" var="item">
-        ${item.id }--用户名：${item.userID.userName }--序列号：${item.userID.serialNumber }--操作：${item.logInfo }<br />
+        ${item.id }--用户名：${item.user.userName }--序列号：${item.user.serialNumber }--操作：${item.logInfo }<br />
     </c:forEach>
   </body>
 </html>

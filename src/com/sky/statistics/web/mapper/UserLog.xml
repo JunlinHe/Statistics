@@ -15,72 +15,84 @@
 	</sql>
 
 	<!-- 为了返回list 类型而定义的returnMap -->
-	<resultMap type="com.sky.statistics.web.model.UserLog" id="resultListUserLog">
-		<id column="id" property="id" />
-		<result column="user_serial_num" property="userSerialNum" />
+	<!--<resultMap type="UserLog" id="resultListUserLog">-->
+		<!--<id column="id" property="id" />-->
+		<!--<result column="user_serialNum" property="userSerialNum" />-->
+		<!--<result column="log_info" property="logInfo" />-->
+		<!--<result column="log_time" property="logTime" />-->
+		<!--<result column="ip" property="IP" />-->
+		<!--<result column="method_name" property="methodName" />-->
+		<!--<result column="model_name" property="modelName" />-->
+		<!--<result column="user_id" property="user" />-->
+	<!--</resultMap>-->
+	<!--&lt;!&ndash; 返回list 的select 语句，注意 resultMap 的值是指向前面定义好的 &ndash;&gt;-->
+	<!--<select id="selectUserLog" parameterType="java.lang.Long" resultMap="resultListUserLog">-->
+		<!--select * from tbl_user_log usl-->
+		<!--where usl.user_id=${user}-->
+	<!--</select>-->
+	<resultMap type="UserLog" id="resultListUserLog">
+		<id column="log_id" property="id" />
+		<result column="log_usn" property="userSerialNum" />
 		<result column="log_info" property="logInfo" />
 		<result column="log_time" property="logTime" />
-		<result column="ip" property="IP" />
-		<result column="method_name" property="methodName" />
-		<result column="model_name" property="modelName" />
-		<!-- 关联 User-->
-		<!--<result column="user_id" property="userID" />-->
-		<association column="user_id" property="userID" javaType="com.sky.statistics.web.model.User" resultMap="resultListUser"/>
-	</resultMap>
-	<resultMap type="com.sky.statistics.web.model.User" id="resultListUser">
-		<id column="id" property="id" />
-		<result column="username" property="userName" />
-		<result column="password" property="password" />
-		<result column="serial_number" property="serialNumber" />
-		<result column="imei" property="IMEI" />
-		<result column="salt" property="salt" />
-		<result column="age" property="age" />
-		<result column="address" property="address" />
-		<result column="company" property="company" />
-		<result column="phone" property="phone" />
-		<result column="ip" property="IP" />
-		<result column="client" property="client" />
-		<result column="last_login_time" property="lastLoginTime" />
-		<result column="head_url" property="headURL" />
-		<result column="creator" property="creator" />
-		<result column="create_time" property="createTime" />
-		<result column="dsc" property="dsc" />
+		<result column="log_ip" property="IP" />
+		<result column="log_methn" property="methodName" />
+		<result column="log_modn" property="modelName" />
+		<association property="user" javaType="User" >
+			<id column="u_id" property="id" />
+			<result column="u_n" property="userName" />
+			<result column="u_pw" property="password" />
+			<result column="u_sn" property="serialNumber" />
+			<result column="u_imei" property="IMEI" />
+			<result column="u_salt" property="salt" />
+			<result column="u_age" property="age" />
+			<result column="u_addr" property="address" />
+			<result column="u_comp" property="company" />
+			<result column="u_phone" property="phone" />
+			<result column="u_ip" property="IP" />
+			<result column="u_client" property="client" />
+			<result column="u_llt" property="lastLoginTime" />
+			<result column="u_hu" property="headURL" />
+			<result column="u_c" property="creator" />
+			<result column="u_ct" property="createTime" />
+			<result column="u_dsc" property="dsc" />
+		</association>
 	</resultMap>
 	<!-- 返回list 的select 语句，注意 resultMap 的值是指向前面定义好的 -->
-	<select id="selectUserLog" parameterType="java.lang.Long" resultMap="resultListUserLog">
-		select usl.id, usl.user_id, usl.user_serial_num,usl.log_info, usl.log_time, usl.ip, usl.method_name, usl.model_name,
-		us.id, us.username, us.password,us.serial_number
-		from tbl_user_log usl left outer join tbl_user us
-		on usl.user_id = us.id
-		where usl.user_id=${userID}
+	<!--重点：当使用bean作为返回类型时，parameterType必须为该bean类型，并且传入参数名应与bean关联字段一致-->
+	<select id="selectUserLog" parameterType="User" resultMap="resultListUserLog">
+		select usl.id log_id, usl.user_serial_num log_usn,usl.log_info log_info, usl.log_time log_time, usl.ip log_ip, usl.method_name log_methn, usl.model_name log_modn,
+		us.id u_id, us.username u_n, us.password u_pw,us.serial_number u_sn, us.imei u_imei, us.salt u_salt,us.age u_age, us.address u_addr,us.company u_comp,us.phone u_phone,us.ip u_ip,us.client u_client,us.last_login_time u_llt,us.head_url u_hu,us.creator u_c,us.create_time u_ct,us.dsc u_dsc
+		from tbl_user_log usl, tbl_user us
+		where usl.user_id = us.id and usl.user_id=${id}
 	</select>
 
 	<!--通过主键查询-->
-	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="com.sky.statistics.web.model.UserLog">
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="UserLog">
 		select <include refid="baseColumnList" />
 		from tbl_user_log
 		where id = #{id}
 	</select>
 
-	<insert id="insertSelective" parameterType="com.sky.statistics.web.model.UserLog"
+	<insert id="insertSelective" parameterType="UserLog"
 			useGeneratedKeys="true"	keyProperty="id">
 		insert into
 		tbl_user_log(<include refid="insertColumn" />)
-		values(#{userID},#{userSerialNum},#{logInfo},#{logTime},#{IP},#{methodName},#{modelName})
+		values(#{user.id},#{userSerialNum},#{logInfo},#{logTime},#{IP},#{methodName},#{modelName})
 	</insert>
-	
-	<update id="updateByPrimaryKeySelective" parameterType="com.sky.statistics.web.model.UserLog" >
-        update tbl_user_log set
-        user_id=#{userID},serial_number=#{serialNumber},log_info=#{logInfo},log_time=#{logTime},ip=#{IP},method_name=#{methodName} ,model_name=#{modelName}
-        where id=#{id}
-    </update>
-    
+
+	<!--<update id="updateByPrimaryKeySelective" parameterType="UserLog" >-->
+        <!--update tbl_user_log set-->
+        <!--user_id=#{user},serial_number=#{serialNumber},log_info=#{logInfo},log_time=#{logTime},ip=#{IP},method_name=#{methodName} ,model_name=#{modelName}-->
+        <!--where id=#{id}-->
+    <!--</update>-->
+
     <delete id="deleteByPrimaryKey" parameterType="Long">
         delete from tbl_user_log where id=#{id}
     </delete>
 
-	<delete id="deleteByUserID" parameterType="Long">
-		delete from tbl_user_log where user_id=#{userID}
+	<delete id="deleteByUserID" parameterType="User">
+		delete from tbl_user_log where user_id=#{id}
 	</delete>
 
 </mapper>

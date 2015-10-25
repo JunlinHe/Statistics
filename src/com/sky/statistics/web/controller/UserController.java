@@ -27,7 +27,7 @@ public class UserController {
      * */
     @RequestMapping("/list")
     public ModelAndView selectall(){
-        List<User> user=userService.selectUsers("%%");
+        List<User> user = userService.selectUsers("%何%");
         System.out.println("小何");
         System.out.println(user);
         ModelAndView mav=new ModelAndView("list");

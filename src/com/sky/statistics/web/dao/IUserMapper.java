@@ -6,7 +6,7 @@ import com.sky.statistics.web.model.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
-@Component
+
 public interface IUserMapper  extends GenericDao<User, Long> {
     @Override
 	User selectByPrimaryKey(Long id);

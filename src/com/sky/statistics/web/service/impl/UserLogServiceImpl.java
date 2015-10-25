@@ -1,19 +1,14 @@
 package com.sky.statistics.web.service.impl;
 
-import com.sky.statistics.core.encoder.Md5PwdEncoder;
 import com.sky.statistics.core.generic.GenericDao;
 import com.sky.statistics.core.generic.GenericServiceImpl;
-import com.sky.statistics.core.util.StringUtil;
 import com.sky.statistics.web.dao.IUserLogMapper;
-import com.sky.statistics.web.dao.IUserMapper;
 import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserLog;
 import com.sky.statistics.web.service.UserLogService;
-import com.sky.statistics.web.service.UserService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,8 +44,8 @@ public class UserLogServiceImpl extends GenericServiceImpl<UserLog, Long> implem
 
 
     @Override
-    public List<UserLog> selectUserLog(Long userID){ return userLogMapper.selectUserLog(userID);}
+    public List<UserLog> selectUserLog(User userID){ return userLogMapper.selectUserLog(userID);}
 
     @Override
-    public int deleteByUserID(Long userID){ return userLogMapper.deleteByUserID(userID);}
+    public int deleteByUserID(User userID){ return userLogMapper.deleteByUserID(userID);}
 }
