@@ -20,7 +20,7 @@ public class UserLogServiceImpl extends GenericServiceImpl<UserLog, Long> implem
     private IUserLogMapper userLogMapper;
 
     @Override
-    public int insert(UserLog model) {return userLogMapper.insertSelective(model);}
+    public int insert(UserLog model) { return userLogMapper.insertSelective(model); }
 
     @Override
     public int update(UserLog model) {

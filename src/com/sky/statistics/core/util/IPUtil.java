@@ -7,10 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.util.Enumeration;
 
 /**
  * Created by HJL on 2015/10/25.
@@ -22,7 +20,7 @@ public class IPUtil {
      * @param strIP
      * @return [国家][省][市][运营商]
      */
-    public String[] getAddressByIP(String strIP)
+    public static String[] getAddressByIP(String strIP)
     {
         try
         {
@@ -83,11 +81,11 @@ public class IPUtil {
     }
 
     /**
-     * 获取当前网络ip
+     * 获取当前网络ip（此方法在代理服务器设置后才能正确获取request中的ip，如nginx的local节点中加proxy_set_header X-real-ip $remote_addr;）
      * @param request
      * @return
      */
-    public String getIpAddr(HttpServletRequest request){
+    public static String getIpAddr(HttpServletRequest request){
         String ipAddress = request.getHeader("x-forwarded-for");
         if(ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("Proxy-Client-IP");
@@ -99,13 +97,16 @@ public class IPUtil {
             ipAddress = request.getRemoteAddr();
             if(ipAddress.equals("127.0.0.1") || ipAddress.equals("0:0:0:0:0:0:0:1")){
                 //根据网卡取本机配置的IP
-                InetAddress inet=null;
-                try {
-                    inet = InetAddress.getLocalHost();
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
-                ipAddress= inet.getHostAddress();
+//                InetAddress inet=null;
+//                try {
+//                    inet = InetAddress.getLocalHost();
+//                } catch (UnknownHostException e) {
+//                    e.printStackTrace();
+//                }
+//                ipAddress= inet.getHostAddress();
+
+                //根据操作系统获取ip
+                ipAddress = getLocalip();
             }
         }
         //对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
@@ -117,9 +118,64 @@ public class IPUtil {
         return ipAddress;
     }
 
-    public static void main(String[] args) {
-
-        IPUtil iu = new IPUtil();
-        System.out.print(iu.getAddressByIP("119.139.127.85")[2]);
+    private static String getLinuxIP() throws SocketException {
+        // 根据网卡取本机配置的IP
+        Enumeration netInterfaces = NetworkInterface.getNetworkInterfaces();
+        InetAddress ipAddress = null;
+        String ip = "";
+        while (netInterfaces.hasMoreElements()) {
+            NetworkInterface ni = (NetworkInterface) netInterfaces
+                    .nextElement();
+            if (ni.getName().equals("eth0")) {
+                continue;
+            } else {
+                Enumeration<?> e2 = ni.getInetAddresses();
+                while (e2.hasMoreElements()) {
+                    ipAddress = (InetAddress) e2.nextElement();
+                    if (ipAddress instanceof Inet6Address)
+                        continue;
+                    ip = ipAddress.getHostAddress();
+//					System.out.println("getLinuxIp:" + ip);
+                }
+                break;
+            }
+        }
+        return ip;
     }
+
+    /*
+     * @return true---是Windows操作系统
+     */
+    public static boolean isWindowsOS() {
+        boolean isWindowsOS = false;
+        String osName = System.getProperty("os.name");
+        if (osName.toLowerCase().indexOf("windows") > -1) {
+            isWindowsOS = true;
+        }
+        return isWindowsOS;
+    }
+
+    private static String getLocalip() {
+        String localIP = null;
+        try {
+            // localIP = InetAddress.getLocalHost(); //结果格式：PC-name/IP
+            boolean isWindows = isWindowsOS(); // 判断是否是windows系统
+            if (isWindows) {
+                InetAddress address = InetAddress.getLocalHost();
+                localIP = address.getHostAddress(); // 获取ip地址
+                //System.out.println("windows ip地址：" + localIP);
+            } else { // 如果是Linux系统
+                localIP = getLinuxIP();
+            }
+        } catch (Exception e) {
+        }
+//		String strLocalIP = localIP.getHostAddress();// IP
+//		return strLocalIP;
+        return localIP;
+    }
+//    public static void main(String[] args) {
+//
+//        IPUtil iu = new IPUtil();
+//        System.out.print(iu.getAddressByIP("119.139.127.85")[2]);
+//    }
 }

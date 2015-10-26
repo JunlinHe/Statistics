@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <properties>
+        <property name="dialectClass" value="com.sky.statistics.core.feature.orm.dialect.MySql5Dialect"/>
+    </properties>
 
     <!-- 配置mybatis的缓存，延迟加载等等一系列属性 -->
     <settings>
@@ -55,4 +58,10 @@
         <typeAlias alias="User" type="com.sky.statistics.web.model.User"/>
         <typeAlias alias="UserLog" type="com.sky.statistics.web.model.UserLog"/>
     </typeAliases>
+
+    <!--配置MySQL分页插件，注意引用dialectClass定义的MySQL方言-->
+    <plugins>
+        <plugin interceptor="com.sky.statistics.core.feature.orm.mybatis.PaginationResultSetHandlerInterceptor"/>
+        <plugin interceptor="com.sky.statistics.core.feature.orm.mybatis.PaginationStatementHandlerInterceptor"/>
+    </plugins>
 </configuration>

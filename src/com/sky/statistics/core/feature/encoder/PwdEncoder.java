@@ -1,4 +1,4 @@
-package com.sky.statistics.core.encoder;
+package com.sky.statistics.core.feature.encoder;
 
 /**
  * 密码加密接口

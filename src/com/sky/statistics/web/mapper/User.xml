@@ -12,7 +12,35 @@
 	<sql id="baseColumnList">
 		id, <include refid="insertColumn" />
 	</sql>
-
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
 
 	<!-- 为了返回list 类型而定义的returnMap -->
 	<resultMap type="com.sky.statistics.web.model.User" id="resultListUser">
@@ -76,4 +104,19 @@
 		where username = #{record.userName} and password = #{record.password}
 	</select>
 
+	<!-- 分页条件查询 -->
+	<select id="selectByExampleAndPage" resultMap="resultListUser" parameterType="com.sky.statistics.web.model.UserExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="baseColumnList" />
+		from tbl_user
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
 </mapper>

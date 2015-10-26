@@ -15,7 +15,7 @@
 <body>
 <form id="logForm">
     <label for="userID">用户ID</label>
-    <input type="text" id="userID" name="userID">
+    <input type="text" id="userID" name="user.id">
     <br>
     <label for="userSerialNum">序列号</label>
     <input type="text" id="userSerialNum" name="userSerialNum" value="123123123">

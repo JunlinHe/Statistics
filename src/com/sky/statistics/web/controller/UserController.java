@@ -1,6 +1,11 @@
 package com.sky.statistics.web.controller;
 
+import com.sky.statistics.core.feature.encoder.Md5PwdEncoder;
+import com.sky.statistics.core.feature.orm.mybatis.Page;
+import com.sky.statistics.core.util.StringUtil;
+import com.sky.statistics.web.dao.IUserMapper;
 import com.sky.statistics.web.model.User;
+import com.sky.statistics.web.model.UserExample;
 import com.sky.statistics.web.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -11,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +27,8 @@ public class UserController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private IUserMapper userMapper;
 
     /**
      * 查询所有用户
@@ -32,6 +40,25 @@ public class UserController {
         System.out.println(user);
         ModelAndView mav=new ModelAndView("list");
         mav.addObject("user",user);
+        return mav;
+    }
+
+    /**
+     * 查询所有用户
+     * */
+    @RequestMapping("/list1")
+    public ModelAndView selectByPram(HttpServletRequest request){
+        int pageNo = Integer.parseInt(request.getParameter("pageNo"));
+        int pageSize = Integer.parseInt(request.getParameter("pageSize"));
+        Page<User> page = new Page<User>(pageNo, pageSize);
+        UserExample example = new UserExample();
+        example.createCriteria().andIdGreaterThan(0L).andUsernameLike("%哒%");
+        final List<User> users = userMapper.selectByExampleAndPage(page, example);
+        for (User user : users) {
+            System.err.println(user);
+        }
+        ModelAndView mav=new ModelAndView("list");
+        mav.addObject("user",users);
         return mav;
     }
 
@@ -51,12 +78,27 @@ public class UserController {
 
         System.out.println(us.getUserName());
 
+        //us初始化
+        Date now = new Date();
+        //获取随机码执行盐渍算法
+        String salt= StringUtil.getRandomString(9);
+        us.setPassword(new Md5PwdEncoder().encodePassword(us.getPassword(),salt));
+        //盐渍生成序列号
+        String serialNumber = new Md5PwdEncoder().encodePassword(us.getIMEI(), salt);
+        us.setSerialNumber(serialNumber);
+        //保存盐渍
+        us.setSalt(salt);
+
+        us.setLastLoginTime(now);
+        us.setCreator("me");
+        us.setCreateTime(now);
         //持久化
         int i = userService.insert(us);
 
-        if(i>0)
+        if(i>0){
             map.put("code", "1");//操作成功
-        else
+            map.put("sn",serialNumber);//返回序列号
+        }else
             map.put("code", "0");//操作失败
 
         return map;

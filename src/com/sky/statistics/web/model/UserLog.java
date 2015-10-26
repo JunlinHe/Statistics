@@ -9,6 +9,7 @@ public class UserLog {
     private String logInfo;
     private Date logTime;
     private String IP;
+    private String area;
     private String methodName;
     private String modelName;
 
@@ -78,5 +79,13 @@ public class UserLog {
 
     public void setModelName(String modelName) {
         this.modelName = modelName;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
     }
 }

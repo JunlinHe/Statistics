@@ -141,4 +141,23 @@ public class StringUtil {
 	    }
 	    return output.toString();
 	  }
+
+	/**
+	 * 拼接字符数组返回字符串，类似js的join方法
+	 * @param join
+	 * @param strAry
+	 * @return
+	 */
+	public static String join(String join,String[] strAry){
+		StringBuffer sb=new StringBuffer();
+		for(int i=0;i<strAry.length;i++){
+			if(i==(strAry.length-1)){
+				sb.append(strAry[i]);
+			}else{
+				sb.append(strAry[i]).append(join);
+			}
+		}
+
+		return new String(sb);
+	}
 }
