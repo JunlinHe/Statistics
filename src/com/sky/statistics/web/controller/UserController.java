@@ -30,23 +30,11 @@ public class UserController {
     @Resource
     private IUserMapper userMapper;
 
-    /**
-     * 查询所有用户
-     * */
-    @RequestMapping("/list")
-    public ModelAndView selectall(){
-        List<User> user = userService.selectUsers("%何%");
-        System.out.println("小何");
-        System.out.println(user);
-        ModelAndView mav=new ModelAndView("list");
-        mav.addObject("user",user);
-        return mav;
-    }
 
     /**
      * 查询所有用户
      * */
-    @RequestMapping("/list1")
+    @RequestMapping("/list")
     public ModelAndView selectByPram(HttpServletRequest request){
         int pageNo = Integer.parseInt(request.getParameter("pageNo"));
         int pageSize = Integer.parseInt(request.getParameter("pageSize"));

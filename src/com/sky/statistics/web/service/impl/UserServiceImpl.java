@@ -4,6 +4,7 @@ import com.sky.statistics.core.generic.GenericDao;
 import com.sky.statistics.core.generic.GenericServiceImpl;
 import com.sky.statistics.web.dao.IUserMapper;
 import com.sky.statistics.web.model.User;
+import com.sky.statistics.web.model.UserExample;
 import com.sky.statistics.web.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +45,11 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
 
     @Override
     public  User authentication(User record){ return  userMapper.authentication(record);}
-
     @Override
-    public List<User> selectUsers(String username) { return userMapper.selectUsers(username); }
+    public User selectByUsername(String username) {
+        UserExample example = new UserExample();
+        example.createCriteria().andUsernameEqualTo(username);
+        final List<User> list = userMapper.selectByExample(example);
+        return list.get(0);
+    }
 }

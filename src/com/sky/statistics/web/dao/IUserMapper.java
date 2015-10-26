@@ -21,6 +21,14 @@ public interface IUserMapper  extends GenericDao<User, Long> {
 	int deleteByPrimaryKey(Long id);
 
 
+	int countByExample(UserExample example);
+
+	int deleteByExample(UserExample example);
+
+	List<User> selectByExample(UserExample example);
+
+	int updateByExample(@Param("record") User record, @Param("example") UserExample example);
+
 	/**
 	 * 用户登录验证查询
 	 *
@@ -29,11 +37,6 @@ public interface IUserMapper  extends GenericDao<User, Long> {
 	 */
 	User authentication(@Param("record") User record);
 
-
-	/**
-	 * 模糊查询
-	 * */
-	List<User> selectUsers(String userName);
 
 	/**
 	 * 分页条件查询

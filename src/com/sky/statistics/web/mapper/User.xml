@@ -12,6 +12,7 @@
 	<sql id="baseColumnList">
 		id, <include refid="insertColumn" />
 	</sql>
+	<!--条件查询-->
 	<sql id="Example_Where_Clause">
 		<where>
 			<foreach collection="oredCriteria" item="criteria" separator="or">
@@ -41,9 +42,38 @@
 			</foreach>
 		</where>
 	</sql>
-
+	<!--条件修改-->
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
 	<!-- 为了返回list 类型而定义的returnMap -->
-	<resultMap type="com.sky.statistics.web.model.User" id="resultListUser">
+	<resultMap type="User" id="resultListUser">
 		<id column="id" property="id" />
 		<result column="username" property="userName" />
 		<result column="password" property="password" />
@@ -63,49 +93,104 @@
 		<result column="dsc" property="dsc" />
 	</resultMap>
 
-	<!-- 返回list 的select 语句，注意 resultMap 的值是指向前面定义好的 -->
-	<select id="selectUsers" parameterType="java.lang.String" resultMap="resultListUser">
-		select <include refid="baseColumnList" />
-		from tbl_user
-		where username like #{userName}
-	</select>
-	<!--通过主键查询-->
-	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="com.sky.statistics.web.model.User">
-		select <include refid="baseColumnList" />
-		from tbl_user
-		where id = #{id}
-	</select>
-
 	<!--执行增加操作的SQL语句。id和parameterType 分别与IUserOperation接口中的addUser方法的名字和 参数类型一致。以#{userName}的形式引用User参数
 		的userName属性，MyBatis将使用反射读取User参数 的此属性。#{userName}中userName大小写敏感。引用其他 的age等属性与此一致。seGeneratedKeys设置
 		为"true"表明要MyBatis获取由数据库自动生成的主 键；keyProperty="id"指定把获取到的主键值注入 到User的id属性 -->
-	<insert id="insertSelective" parameterType="com.sky.statistics.web.model.User"
+	<insert id="insertSelective" parameterType="User"
 			useGeneratedKeys="true"	keyProperty="id">
 		insert into
 		tbl_user(<include refid="insertColumn" />)
 		values(#{userName},#{password},#{serialNumber},#{IMEI},#{salt},#{age},#{address},#{company},#{phone},#{IP},#{client},#{lastLoginTime},#{headURL},#{creator},#{createTime},#{dsc})
 	</insert>
-	
-	<update id="updateByPrimaryKeySelective" parameterType="com.sky.statistics.web.model.User" >
-        update tbl_user set
-        username=#{userName},serial_number=#{serialNumber},imei=#{IMEI},salt=#{salt},age=#{age},password=#{password} ,address=#{address},company=#{company} ,phone=#{phone},ip=#{IP} ,client=#{client},last_login_time=#{lastLoginTime} ,head_url=#{headURL},creator=#{creator},create_time=#{createTime},dsc=#{dsc}
-        where id=#{id}
-    </update>
-    
-    <delete id="deleteByPrimaryKey" parameterType="Long">
-        delete from tbl_user where id=#{id}
-    </delete>
 
 
+	<delete id="deleteByPrimaryKey" parameterType="Long">
+		delete from tbl_user where id=#{id}
+	</delete>
+	<delete id="deleteByExample" parameterType="UserExample">
+		delete from tbl_user
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+
+	<update id="updateByPrimaryKeySelective" parameterType="User" >
+		update tbl_user set
+		username=#{userName},serial_number=#{serialNumber},imei=#{IMEI},salt=#{salt},age=#{age},password=#{password} ,address=#{address},company=#{company} ,phone=#{phone},ip=#{IP} ,client=#{client},last_login_time=#{lastLoginTime} ,head_url=#{headURL},creator=#{creator},create_time=#{createTime},dsc=#{dsc}
+		where id=#{id}
+	</update>
+	<update id="updateByExampleSelective" parameterType="map">
+		update tbl_user
+		<set>
+			<if test="record.id != null">
+				id = #{record.id},
+			</if>
+			<if test="record.username != null">
+				username = #{record.username},
+			</if>
+			<if test="record.password != null">
+				password = #{record.password},
+			</if>
+			<if test="record.creator != null">
+				creator = #{record.creator},
+			</if>
+			<if test="record.createTime != null">
+				create_time = #{record.createTime},
+			</if>
+			<if test="record.dsc != null">
+				dsc = #{record.dsc},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update user
+		set id = #{record.id,jdbcType=BIGINT},
+		username = #{record.username,jdbcType=VARCHAR},
+		password = #{record.password,jdbcType=CHAR},
+		state = #{record.state,jdbcType=VARCHAR},
+		create_time = #{record.createTime,jdbcType=TIMESTAMP}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+
+	<select id="countByExample" parameterType="UserExample" resultType="java.lang.Integer">
+		select count(*) from tbl_user
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<select id="selectByExample" resultMap="resultListUser" parameterType="UserExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="baseColumnList" />
+		from tbl_user
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<!--通过主键查询-->
+	<select id="selectByPrimaryKey" parameterType="Long" resultType="User">
+		select <include refid="baseColumnList" />
+		from tbl_user
+		where id = #{id}
+	</select>
 	<!--登录验证-->
-	<select id="authentication" parameterType="com.sky.statistics.web.model.User" resultMap="resultListUser">
+	<select id="authentication" parameterType="User" resultMap="resultListUser">
 		select <include refid="baseColumnList" />
 		from tbl_user
 		where username = #{record.userName} and password = #{record.password}
 	</select>
-
 	<!-- 分页条件查询 -->
-	<select id="selectByExampleAndPage" resultMap="resultListUser" parameterType="com.sky.statistics.web.model.UserExample">
+	<select id="selectByExampleAndPage" resultMap="resultListUser" parameterType="UserExample">
 		select
 		<if test="distinct">
 			distinct
