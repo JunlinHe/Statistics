@@ -1,5 +1,6 @@
 package com.sky.statistics.web.controller;
 
+import com.sky.statistics.core.constant.SysConst;
 import com.sky.statistics.core.feature.encoder.Md5PwdEncoder;
 import com.sky.statistics.core.feature.orm.mybatis.Page;
 import com.sky.statistics.core.util.StringUtil;
@@ -7,6 +8,7 @@ import com.sky.statistics.web.dao.IUserMapper;
 import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserExample;
 import com.sky.statistics.web.service.UserService;
+import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -27,21 +29,19 @@ public class UserController {
 
     @Resource
     private UserService userService;
-    @Resource
-    private IUserMapper userMapper;
 
 
     /**
      * 查询所有用户
      * */
-    @RequestMapping("/list")
+    @RequestMapping(value="/list")
     public ModelAndView selectByPram(HttpServletRequest request){
         int pageNo = Integer.parseInt(request.getParameter("pageNo"));
         int pageSize = Integer.parseInt(request.getParameter("pageSize"));
         Page<User> page = new Page<User>(pageNo, pageSize);
         UserExample example = new UserExample();
-        example.createCriteria().andIdGreaterThan(0L).andUsernameLike("%哒%");
-        final List<User> users = userMapper.selectByExampleAndPage(page, example);
+        example.createCriteria().andIdGreaterThan(0L);
+        final List<User> users = userService.selectByExampleAndPage(page, example);
         for (User user : users) {
             System.err.println(user);
         }
@@ -57,14 +57,14 @@ public class UserController {
     @ResponseBody
     public Map<String,Object> insertUser(@Valid User us, BindingResult result)
     {
-        //返回操作状态码
+        //user参数不全返回失败操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
         if (result.hasErrors()) {
-            map.put("code", "-1");
+            //TODO 捕获异常
+            //System.out.println(result.getFieldErrors());
+            map.put("code", SysConst.OP_FAILD);
             return map;
         }
-
-        System.out.println(us.getUserName());
 
         //us初始化
         Date now = new Date();
@@ -84,10 +84,10 @@ public class UserController {
         int i = userService.insert(us);
 
         if(i>0){
-            map.put("code", "1");//操作成功
+            map.put("code", SysConst.OP_SUCCESS);//操作成功
             map.put("sn",serialNumber);//返回序列号
         }else
-            map.put("code", "0");//操作失败
+            map.put("code", SysConst.OP_FAILD);//操作失败
 
         return map;
     }
@@ -103,7 +103,7 @@ public class UserController {
         Map<String,Object> map = new HashMap<String,Object>();
 
         if (result.hasErrors()) {
-            map.put("code", "-1");
+            map.put("code", SysConst.OP_FAILD);
             return map;
         }
 
@@ -112,14 +112,37 @@ public class UserController {
 
 
         if(user.getId()>0)
-            map.put("code", "1");//操作成功
+            map.put("code", SysConst.OP_SUCCESS);//操作成功
         else
-            map.put("code", "0");//操作失败
+            map.put("code", SysConst.OP_FAILD);//操作失败
 
         return map;
     }
 
+    /**
+     * 查询用户信息
+     * */
+    @RequestMapping(value="/select",method= RequestMethod.POST)
+    @ResponseBody
+    public Map<String,Object> select(User us)
+    {
+        //返回操作状态码
+        Map<String,Object> map = new HashMap<String,Object>();
 
+        //查询
+        Page<User> page = new Page<User>(1, 1);
+        UserExample example = new UserExample();
+        example.createCriteria().andIdEqualTo(us.getId());
+        final List<User> users = userService.selectByExampleAndPage(page, example);
+
+        if(users.size()>0){
+            map.put("code", SysConst.OP_SUCCESS);//操作成功
+            map.put("data", users);//操作成功
+        }else
+            map.put("code", SysConst.OP_FAILD);//操作失败
+
+        return map;
+    }
 
 
     @RequestMapping(value="/json",method= RequestMethod.POST)

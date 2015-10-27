@@ -1,20 +1,28 @@
 package com.sky.statistics.web.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
+//@JsonAutoDetect(JsonMethod.FIELD)
 public class User {
     private Long id;
-//    @NotNull(message="名字不能为空")
+    @NotEmpty(message="{user.username.null}")
     private String userName;
-//    @Size(min=8, max=16,message="密码长度8~16位")
+    @NotEmpty(message="{user.password.null}")
+    @Size(min=8, max=16,message="{user.password.size}")
     private String password;
     private String serialNumber;
+    @NotEmpty(message="{user.imei.null}")
     private String IMEI;
-//    @Max(value=150,message="年龄最大不能超过150")
     private String salt;
+    private int state;
+    @Max(value=150,message="{user.age.error}")
     private int age;
     private String address;
     private String company;
@@ -172,6 +180,14 @@ public class User {
         this.salt = salt;
     }
 
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -181,6 +197,7 @@ public class User {
                 ", serialNumber='" + serialNumber + '\'' +
                 ", IMEI='" + IMEI + '\'' +
                 ", salt='" + salt + '\'' +
+                ", state=" + state +
                 ", age=" + age +
                 ", address='" + address + '\'' +
                 ", company='" + company + '\'' +

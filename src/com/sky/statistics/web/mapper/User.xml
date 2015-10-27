@@ -6,7 +6,7 @@
 
 	<!--插入字段-->
 	<sql id="insertColumn">
-		username, password, serial_number,imei,salt, age, address, company, phone, ip, client, last_login_time, head_url, creator, create_time, dsc
+		username, password, serial_number,imei,salt,state, age, address, company, phone, ip, client, last_login_time, head_url, creator, create_time, dsc
 	</sql>
 	<!--基本返回字段-->
 	<sql id="baseColumnList">
@@ -80,6 +80,7 @@
 		<result column="serial_number" property="serialNumber" />
 		<result column="imei" property="IMEI" />
 		<result column="salt" property="salt" />
+		<result column="state" property="state" />
 		<result column="age" property="age" />
 		<result column="address" property="address" />
 		<result column="company" property="company" />
@@ -96,13 +97,121 @@
 	<!--执行增加操作的SQL语句。id和parameterType 分别与IUserOperation接口中的addUser方法的名字和 参数类型一致。以#{userName}的形式引用User参数
 		的userName属性，MyBatis将使用反射读取User参数 的此属性。#{userName}中userName大小写敏感。引用其他 的age等属性与此一致。seGeneratedKeys设置
 		为"true"表明要MyBatis获取由数据库自动生成的主 键；keyProperty="id"指定把获取到的主键值注入 到User的id属性 -->
+	<insert id="insert" parameterType="User"
+			useGeneratedKeys="true"	keyProperty="id">
+		insert into tbl_user(<include refid="insertColumn" />)
+		values(#{userName},#{password},#{serialNumber},#{IMEI},#{salt},#{state},#{age},#{address},#{company},#{phone},#{IP},#{client},#{lastLoginTime},#{headURL},#{creator},#{createTime},#{dsc})
+	</insert>
 	<insert id="insertSelective" parameterType="User"
 			useGeneratedKeys="true"	keyProperty="id">
-		insert into
-		tbl_user(<include refid="insertColumn" />)
-		values(#{userName},#{password},#{serialNumber},#{IMEI},#{salt},#{age},#{address},#{company},#{phone},#{IP},#{client},#{lastLoginTime},#{headURL},#{creator},#{createTime},#{dsc})
+		insert into tbl_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userName != null">
+				username,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+			<if test="serialNumber != null">
+				serial_number,
+			</if>
+			<if test="IMEI != null">
+				imei,
+			</if>
+			<if test="salt != null">
+				salt,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="age != null">
+				age,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="company != null">
+				company,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+			<if test="IP != null">
+				ip,
+			</if>
+			<if test="client != null">
+				client,
+			</if>
+			<if test="lastLoginTime != null">
+				last_login_time,
+			</if>
+			<if test="headURL != null">
+				head_url,
+			</if>
+			<if test="creator != null">
+				creator,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="dsc != null">
+				dsc,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userName != null">
+				#{userName},
+			</if>
+			<if test="password != null">
+				#{password},
+			</if>
+			<if test="serialNumber != null">
+				#{serialNumber},
+			</if>
+			<if test="IMEI != null">
+				#{IMEI},
+			</if>
+			<if test="salt != null">
+				#{salt},
+			</if>
+			<if test="state != null">
+				#{state},
+			</if>
+			<if test="age != null">
+				#{age},
+			</if>
+			<if test="address != null">
+				#{address},
+			</if>
+			<if test="company != null">
+				#{company},
+			</if>
+			<if test="phone != null">
+				#{phone},
+			</if>
+			<if test="IP != null">
+				#{IP},
+			</if>
+			<if test="client != null">
+				#{client},
+			</if>
+			<if test="lastLoginTime != null">
+				#{lastLoginTime},
+			</if>
+			<if test="headURL != null">
+				#{headURL},
+			</if>
+			<if test="creator != null">
+				#{creator},
+			</if>
+			<if test="createTime != null">
+				#{createTime},
+			</if>
+			<if test="dsc != null">
+				#{dsc},
+			</if>
+		</trim>
 	</insert>
-
 
 	<delete id="deleteByPrimaryKey" parameterType="Long">
 		delete from tbl_user where id=#{id}
@@ -115,8 +224,60 @@
 	</delete>
 
 	<update id="updateByPrimaryKeySelective" parameterType="User" >
-		update tbl_user set
-		username=#{userName},serial_number=#{serialNumber},imei=#{IMEI},salt=#{salt},age=#{age},password=#{password} ,address=#{address},company=#{company} ,phone=#{phone},ip=#{IP} ,client=#{client},last_login_time=#{lastLoginTime} ,head_url=#{headURL},creator=#{creator},create_time=#{createTime},dsc=#{dsc}
+		update tbl_user
+		<set>
+			<if test="username != null">
+				username = #{username},
+			</if>
+			<if test="password != null">
+				password = #{password},
+			</if>
+			<if test="serialNumber != null">
+				serial_number = #{serialNumber},
+			</if>
+			<if test="IMEI != null">
+				imei = #{IMEI},
+			</if>
+			<if test="salt != null">
+				salt = #{salt},
+			</if>
+			<if test="state != null">
+				state = #{state},
+			</if>
+			<if test="age != null">
+				age = #{age},
+			</if>
+			<if test="address != null">
+				address = #{address},
+			</if>
+			<if test="company != null">
+				company = #{company},
+			</if>
+			<if test="phone != null">
+				phone = #{phone},
+			</if>
+			<if test="IP != null">
+				ip = #{IP},
+			</if>
+			<if test="client != null">
+				client = #{client},
+			</if>
+			<if test="lastLoginTime != null">
+				last_login_time = #{lastLoginTime},
+			</if>
+			<if test="headURL != null">
+				head_url = #{headURL},
+			</if>
+			<if test="creator != null">
+				creator = #{creator},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+			<if test="dsc != null">
+				dsc = #{dsc},
+			</if>
+		</set>
 		where id=#{id}
 	</update>
 	<update id="updateByExampleSelective" parameterType="map">
@@ -130,6 +291,42 @@
 			</if>
 			<if test="record.password != null">
 				password = #{record.password},
+			</if>
+			<if test="record.serialNumber != null">
+				serial_number = #{record.serialNumber},
+			</if>
+			<if test="record.IMEI != null">
+				imei = #{record.IMEI},
+			</if>
+			<if test="record.salt != null">
+				salt = #{record.salt},
+			</if>
+			<if test="record.state != null">
+				state = #{record.state},
+			</if>
+			<if test="record.age != null">
+				age = #{record.age},
+			</if>
+			<if test="record.address != null">
+				address = #{record.address},
+			</if>
+			<if test="record.company != null">
+				company = #{record.company},
+			</if>
+			<if test="record.phone != null">
+				phone = #{record.phone},
+			</if>
+			<if test="record.IP != null">
+				ip = #{record.IP},
+			</if>
+			<if test="record.client != null">
+				client = #{record.client},
+			</if>
+			<if test="record.lastLoginTime != null">
+				last_login_time = #{record.lastLoginTime},
+			</if>
+			<if test="record.headURL != null">
+				head_url = #{record.headURL},
 			</if>
 			<if test="record.creator != null">
 				creator = #{record.creator},
@@ -146,12 +343,8 @@
 		</if>
 	</update>
 	<update id="updateByExample" parameterType="map">
-		update user
-		set id = #{record.id,jdbcType=BIGINT},
-		username = #{record.username,jdbcType=VARCHAR},
-		password = #{record.password,jdbcType=CHAR},
-		state = #{record.state,jdbcType=VARCHAR},
-		create_time = #{record.createTime,jdbcType=TIMESTAMP}
+		update tbl_user set
+		username=#{record.userName},serial_number=#{record.serialNumber},imei=#{record.IMEI},salt=#{record.salt},state=#{record.state},age=#{record.age},password=#{record.password} ,address=#{record.address},company=#{record.company} ,phone=#{record.phone},ip=#{record.IP} ,client=#{record.client},last_login_time=#{record.lastLoginTime} ,head_url=#{record.headURL},creator=#{record.creator},create_time=#{record.createTime},dsc=#{record.dsc}
 		<if test="_parameter != null">
 			<include refid="Update_By_Example_Where_Clause" />
 		</if>

@@ -1,9 +1,14 @@
 package com.sky.statistics.web.controller;
 
+import com.sky.statistics.core.constant.SysConst;
+import com.sky.statistics.core.feature.orm.mybatis.Page;
 import com.sky.statistics.core.util.IPUtil;
 import com.sky.statistics.core.util.StringUtil;
+import com.sky.statistics.web.dao.IUserLogMapper;
 import com.sky.statistics.web.model.User;
+import com.sky.statistics.web.model.UserExample;
 import com.sky.statistics.web.model.UserLog;
+import com.sky.statistics.web.model.UserLogExample;
 import com.sky.statistics.web.service.UserLogService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -28,7 +33,8 @@ public class UserLogController {
 
     @Resource
     private UserLogService userLogService;
-
+    @Resource
+    private IUserLogMapper userLogMapper;
     /**
      * 查询用户日志
      * */
@@ -46,6 +52,27 @@ public class UserLogController {
     }
 
     /**
+     * 查询用户日志
+     * */
+    @RequestMapping("/list1")
+    public ModelAndView selectUserLogPage(){
+        User us = new User();
+        us.setId(2L);
+
+        Page<UserLog> page = new Page<UserLog>(1, 2);
+        UserLogExample example = new UserLogExample();
+        example.createCriteria().relationUser().andUserIDEqualTo(2L);
+
+        final List<UserLog> usl = userLogMapper.selectByExampleAndPage(page,example);
+//        final List<UserLog> usl = userLogMapper.selectUserLog(page, us);
+        for (UserLog user : usl) {
+            System.err.println(user);
+        }
+        ModelAndView mav=new ModelAndView("list");
+        mav.addObject("userLog",usl);
+        return mav;
+    }
+    /**
      * 记录操作日志
      * */
     @RequestMapping(value="/insert",method= RequestMethod.POST)
@@ -55,7 +82,7 @@ public class UserLogController {
         //返回操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
         if (result.hasErrors()) {
-            map.put("code", "-1");
+            map.put("code", SysConst.OP_FAILD);
             return map;
         }
 
@@ -70,12 +97,14 @@ public class UserLogController {
         usl.setLogTime(new Date());
 
         //持久化
-        int i = userLogService.insert(usl);
-        System.out.println("存储返回结果i："+i);
-        if(i>0)
-            map.put("code", "1");//操作成功
+        userLogService.insert(usl);
+
+        Long resultID = usl.getId();
+        System.out.println("存储返回结果i："+resultID);
+        if(resultID > 0L)
+            map.put("code", SysConst.OP_SUCCESS);//操作成功
         else
-            map.put("code", "0");//操作失败
+            map.put("code", SysConst.OP_FAILD);//操作失败
 
         return map;
     }

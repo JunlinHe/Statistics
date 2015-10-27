@@ -58,6 +58,7 @@
         <typeAlias alias="User" type="com.sky.statistics.web.model.User"/>
         <typeAlias alias="UserExample" type="com.sky.statistics.web.model.UserExample"/>
         <typeAlias alias="UserLog" type="com.sky.statistics.web.model.UserLog"/>
+        <typeAlias alias="UserLogExample" type="com.sky.statistics.web.model.UserLogExample"/>
     </typeAliases>
 
     <!--配置MySQL分页插件，注意引用dialectClass定义的MySQL方言-->
