@@ -91,7 +91,7 @@
     <h3>修改</h3>
     <form id="updateForm">
         <label for="updateID">ID</label>
-        <input type="text" id="updateID" >
+        <input type="text" id="updateID" name="id">
         <br>
         <label for="userName">姓名</label>
         <input type="text" name="userName">
@@ -132,6 +132,14 @@
     <div id="updateState" class="display"></div>
 </div>
 
+<div class="panel">
+    <h3>删除</h3>
+    <label for="deleteUser">ID</label>
+    <input type="text" id="deleteUser" placeholder="输入要删除的用户ID">
+    <input type="button" id="actionDelete" value="删除">
+
+    <div id="deleteState" class="display"></div>
+</div>
 
 <script>
 $(function(){
@@ -185,6 +193,40 @@ $(function(){
                 console.log(data);
                 $('#updateState').html(JSON.stringify(data));
                 $("#updateForm").autofill( data.data[0] );
+            }
+        });
+
+    });
+
+    $('#submitUpdate').on('click',function(){
+        var data = $('#updateForm').serialize();
+        console.log(data);
+        $.ajax({
+            url:'user/update',
+            data:data,
+            dataType:'json',
+            type:'post',
+            //contentType:'application/json;charset=UTF-8',
+            success:function(data){
+                console.log(data);
+                $('#updateState').html(JSON.stringify(data));
+            }
+        });
+
+    });
+
+    $('#actionDelete').on('click',function(){
+        var usID = $('#deleteUser').val();
+
+        $.ajax({
+            url:'user/delete',
+            data:{id:usID},
+            dataType:'json',
+            type:'post',
+            //contentType:'application/json;charset=UTF-8',
+            success:function(data){
+                console.log(data);
+                $('#deleteState').html(JSON.stringify(data));
             }
         });
 

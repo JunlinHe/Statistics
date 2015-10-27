@@ -124,7 +124,7 @@ public class UserController {
      * */
     @RequestMapping(value="/select",method= RequestMethod.POST)
     @ResponseBody
-    public Map<String,Object> select(User us)
+    public Map<String,Object> selectUserInfo(User us)
     {
         //返回操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
@@ -144,6 +144,47 @@ public class UserController {
         return map;
     }
 
+    /**
+     * 修改用户信息
+     * */
+    @RequestMapping(value="/update",method= RequestMethod.POST)
+    @ResponseBody
+    public Map<String,Object> updateUserInfo(User us)
+    {
+        //返回操作状态码
+        Map<String,Object> map = new HashMap<String,Object>();
+
+        int i = userService.update(us);
+        System.out.println(i);
+        if(i>0){
+            map.put("code", SysConst.OP_SUCCESS);//操作成功
+
+        }else
+            map.put("code", SysConst.OP_FAILD);//操作失败
+        map.put("i", i);
+        return map;
+    }
+
+    /**
+     * 修改用户信息
+     * */
+    @RequestMapping(value="/delete",method= RequestMethod.POST)
+    @ResponseBody
+    public Map<String,Object> deleteUserInfo(@RequestParam Long id)
+    {
+        //返回操作状态码
+        Map<String,Object> map = new HashMap<String,Object>();
+
+        int i = userService.delete(id);
+        System.out.println(i);
+        if(i>0){
+            map.put("code", SysConst.OP_SUCCESS);//操作成功
+
+        }else
+            map.put("code", SysConst.OP_FAILD);//操作失败
+        map.put("i", i);
+        return map;
+    }
 
     @RequestMapping(value="/json",method= RequestMethod.POST)
     @ResponseBody//将内容或对象作为 HTTP 响应正文返回，使用@ResponseBody将会跳过视图处理部分，而是调用适合HttpMessageConverter，将返回值写入输出流。

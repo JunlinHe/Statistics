@@ -1,15 +1,13 @@
 package com.sky.statistics.web.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
-
-//@JsonAutoDetect(JsonMethod.FIELD)
+//此注解的作用是只检查属性不检查方法，解决Jackson序列化bean时变量名大小写改变的问题
+@JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY, getterVisibility= JsonAutoDetect.Visibility.NONE)
 public class User {
     private Long id;
     @NotEmpty(message="{user.username.null}")

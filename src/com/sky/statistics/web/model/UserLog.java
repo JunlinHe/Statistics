@@ -1,7 +1,10 @@
 package com.sky.statistics.web.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
 import java.util.Date;
 
+@JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY, getterVisibility= JsonAutoDetect.Visibility.NONE)
 public class UserLog {
     private Long id;
     private User user;

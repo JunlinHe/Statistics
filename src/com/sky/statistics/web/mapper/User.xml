@@ -226,8 +226,8 @@
 	<update id="updateByPrimaryKeySelective" parameterType="User" >
 		update tbl_user
 		<set>
-			<if test="username != null">
-				username = #{username},
+			<if test="userName != null">
+				username = #{userName},
 			</if>
 			<if test="password != null">
 				password = #{password},
@@ -286,8 +286,8 @@
 			<if test="record.id != null">
 				id = #{record.id},
 			</if>
-			<if test="record.username != null">
-				username = #{record.username},
+			<if test="record.userName != null">
+				username = #{record.userName},
 			</if>
 			<if test="record.password != null">
 				password = #{record.password},
