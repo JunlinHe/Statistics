@@ -62,8 +62,22 @@ public class UserController {
         //user参数不全返回失败操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
         //TODO 如果用户提交了序列号则只记录日志
+        String sn = us.getSerialNumber();
+        String uuid = us.getUuid();
 
-        //us初始化
+        if(checkUser(uuid,sn).size()>0){
+            //已注册则添加日志
+
+            if(us.getId()>0L){
+                map.put("code", SysConst.OP_SUCCESS);//操作成功
+                map.put("data", us);//用户信息
+            }else
+                map.put("code", SysConst.OP_FAILD);//操作失败
+            return map;
+        }
+        //否则注册
+
+        //user初始化
         Date now = new Date();
         //获取随机码执行盐渍算法
         String salt= StringUtil.getRandomString(9);
@@ -88,6 +102,15 @@ public class UserController {
             map.put("code", SysConst.OP_FAILD);//操作失败
 
         return map;
+    }
+
+    public List<User> checkUser(String uuid, String sn){
+
+        //查询
+        Page<User> page = new Page<User>(1, 1);
+        UserExample example = new UserExample();
+        example.createCriteria().andUuidEqualTo(uuid).andSNEqualTo(sn);
+        return userService.selectByExampleAndPage(page, example);
     }
 
     /**

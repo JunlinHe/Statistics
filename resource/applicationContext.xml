@@ -21,7 +21,7 @@
         <property name="password" value="root"/>
         <property name="maximumConnectionCount" value="100"/>
         <property name="minimumConnectionCount" value="10"/>
-        <!--<property name="houseKeepingTestSql" value="select now()"/>-->
+        <property name="houseKeepingTestSql" value="select now()"/>
     </bean>
 
     <!-- 事务 begin -->
