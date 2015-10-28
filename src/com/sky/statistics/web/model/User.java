@@ -10,21 +10,22 @@ import java.util.Date;
 @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY, getterVisibility= JsonAutoDetect.Visibility.NONE)
 public class User {
     private Long id;
-    @NotEmpty(message="{user.username.null}")
+//    @NotEmpty(message="{user.username.null}")
     private String userName;
-    @NotEmpty(message="{user.password.null}")
-    @Size(min=8, max=16,message="{user.password.size}")
+//    @NotEmpty(message="{user.password.null}")
+//    @Size(min=8, max=16,message="{user.password.size}")
     private String password;
     private String serialNumber;
-    @NotEmpty(message="{user.imei.null}")
-    private String IMEI;
+//    @NotEmpty(message="{user.imei.null}")
+    private String uuid;
     private String salt;
     private int state;
-    @Max(value=150,message="{user.age.error}")
+//    @Max(value=150,message="{user.age.error}")
     private int age;
     private String address;
     private String company;
     private String phone;
+    private String email;
     private String IP;
     private String client;
     private Date lastLoginTime;
@@ -74,12 +75,12 @@ public class User {
         this.serialNumber = serialNumber;
     }
 
-    public String getIMEI() {
-        return IMEI;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setIMEI(String IMEI) {
-        this.IMEI = IMEI;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public int getAge() {
@@ -186,6 +187,14 @@ public class User {
         this.state = state;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -193,13 +202,14 @@ public class User {
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", serialNumber='" + serialNumber + '\'' +
-                ", IMEI='" + IMEI + '\'' +
+                ", uuid='" + uuid + '\'' +
                 ", salt='" + salt + '\'' +
                 ", state=" + state +
                 ", age=" + age +
                 ", address='" + address + '\'' +
                 ", company='" + company + '\'' +
                 ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
                 ", IP='" + IP + '\'' +
                 ", client='" + client + '\'' +
                 ", lastLoginTime=" + lastLoginTime +

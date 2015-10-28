@@ -12,6 +12,7 @@ import com.sky.statistics.web.model.UserLogExample;
 import com.sky.statistics.web.service.UserLogService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -72,19 +73,63 @@ public class UserLogController {
         mav.addObject("userLog",usl);
         return mav;
     }
+
+    /**
+     * 查询用户日志
+     * */
+    @RequestMapping("/getLog")
+    @ResponseBody
+    public Map<String,Object> selectLog(HttpServletRequest request, UserLog usl){
+        //user参数不全返回失败操作状态码
+        Map<String,Object> map = new HashMap<String,Object>();
+        int pageNo = Integer.parseInt(request.getParameter("pageNo"));
+        int pageSize = Integer.parseInt(request.getParameter("pageSize"));
+//        int pageNo = 1;
+//        int pageSize = 5;
+        Page<UserLog> page = new Page<UserLog>(pageNo, pageSize);
+        //提供id、user.id、area、userSN、logTime 五个查询条件
+        UserLogExample example = new UserLogExample();
+        //查询规则
+        UserLogExample.Criteria criteria = example.createCriteria();
+        criteria.relationUser();//关联用户表
+
+        System.out.println(usl);
+        //封装查询条件
+        if( usl.getId() != null )
+            criteria.andIdEqualTo(usl.getId());
+        if( usl.getUser().getId() != null )
+            criteria.andUserIDEqualTo(usl.getUser().getId());
+        if( !StringUtil.isEmpty(usl.getArea()) )
+            criteria.andAreaLike("%" + usl.getArea() + "%");
+        if( !StringUtil.isEmpty(usl.getUserSerialNum()) )
+            criteria.andUserSNEqualTo(usl.getUserSerialNum());
+        if( usl.getLogTime() != null )
+            criteria.andLogTimeLessThanOrEqualTo(usl.getLogTime());
+
+        final List<UserLog> listUserLog = userLogService.selectByExampleAndPage(page, example);
+        System.out.println(listUserLog);
+        if(listUserLog.size()>0){
+            map.put("code", SysConst.OP_SUCCESS);//操作成功
+            map.put("data", listUserLog);//操作成功
+        }else
+            map.put("code", SysConst.OP_FAILD);//操作失败
+        return map;
+    }
+
+
     /**
      * 记录操作日志
      * */
-    @RequestMapping(value="/insert",method= RequestMethod.POST)
+    @RequestMapping(value="/insert",method= RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public Map<String,Object> insertLog(@Valid UserLog usl, BindingResult result,HttpServletRequest request)
+    public Map<String,Object> insertLog(@RequestBody UserLog usl, HttpServletRequest request)
     {
         //返回操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
-        if (result.hasErrors()) {
-            map.put("code", SysConst.OP_FAILD);
-            return map;
-        }
+//        if (result.hasErrors()) {
+//            map.put("code", SysConst.OP_FAILD);
+//            return map;
+//        }
 
         //System.out.println(usl.getUser().getUserName());
         System.out.println("用户id："+usl.getUser().getId());
@@ -93,7 +138,7 @@ public class UserLogController {
         String ip = IPUtil.getIpAddr(request);
         String[] addr = IPUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
         usl.setIP(ip);
-        usl.setArea(StringUtil.join(",",addr));
+        usl.setArea(StringUtil.joinIgnoreEmptyStr(",", addr));
         usl.setLogTime(new Date());
 
         //持久化

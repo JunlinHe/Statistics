@@ -1,10 +1,12 @@
 package com.sky.statistics.web.service.impl;
 
+import com.sky.statistics.core.feature.orm.mybatis.Page;
 import com.sky.statistics.core.generic.GenericDao;
 import com.sky.statistics.core.generic.GenericServiceImpl;
 import com.sky.statistics.web.dao.IUserLogMapper;
 import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserLog;
+import com.sky.statistics.web.model.UserLogExample;
 import com.sky.statistics.web.service.UserLogService;
 import org.springframework.stereotype.Service;
 
@@ -48,4 +50,14 @@ public class UserLogServiceImpl extends GenericServiceImpl<UserLog, Long> implem
 
     @Override
     public int deleteByUserID(User userID){ return userLogMapper.deleteByUserID(userID);}
+
+    /**
+     * 分页条件查询
+     *
+     * @param page
+     * @param example
+     * @return
+     */
+    @Override
+    public List<UserLog> selectByExampleAndPage(Page<UserLog> page, UserLogExample example){ return userLogMapper.selectByExampleAndPage(page, example);}
 }

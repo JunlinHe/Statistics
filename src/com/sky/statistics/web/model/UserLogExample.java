@@ -317,9 +317,7 @@ public class UserLogExample {
             return (Criteria) this;
         }
 
-        
 
-        //////
         public Criteria andUserSNIsNull() {
             addCriterion("user_serial_num is null");
             return (Criteria) this;
@@ -387,6 +385,77 @@ public class UserLogExample {
 
         public Criteria andUserSNNotBetween(String value1, String value2) {
             addCriterion("user_serial_num not between", value1, value2, "user_serial_num");
+            return (Criteria) this;
+        }
+
+        //
+        public Criteria andLogTimeIsNull() {
+            addCriterion("Date(log_time) is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeIsNotNull() {
+            addCriterion("Date(log_time) is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeEqualTo(String value) {
+            addCriterion("Date(log_time) =", value, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeNotEqualTo(Date value) {
+            addCriterion("Date(log_time) <>", value, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeGreaterThan(Date value) {
+            addCriterion("Date(log_time) >", value, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeGreaterThanOrEqualTo(String value) {
+            addCriterion("Date(log_time) >=", value, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeLessThan(Date value) {
+            addCriterion("Date(log_time) <", value, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeLessThanOrEqualTo(Date value) {
+            addCriterion("Date(log_time) <=", value, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeLike(Date value) {
+            addCriterion("Date(log_time) like", value, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeNotLike(Date value) {
+            addCriterion("Date(log_time) not like", value, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeIn(List<Date> values) {
+            addCriterion("Date(log_time) in", values, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeNotIn(List<Date> values) {
+            addCriterion("Date(log_time) not in", values, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeBetween(Date value1, Date value2) {
+            addCriterion("Date(log_time) between", value1, value2, "log_time");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogTimeNotBetween(Date value1, Date value2) {
+            addCriterion("Date(log_time) not between", value1, value2, "log_time");
             return (Criteria) this;
         }
     }

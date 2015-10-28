@@ -6,7 +6,7 @@
 
 	<!--插入字段-->
 	<sql id="insertColumn">
-		username, password, serial_number,imei,salt,state, age, address, company, phone, ip, client, last_login_time, head_url, creator, create_time, dsc
+		username, password, serial_number,uuid,salt,state, age, address, company, phone,email, ip, client, last_login_time, head_url, creator, create_time, dsc
 	</sql>
 	<!--基本返回字段-->
 	<sql id="baseColumnList">
@@ -78,13 +78,14 @@
 		<result column="username" property="userName" />
 		<result column="password" property="password" />
 		<result column="serial_number" property="serialNumber" />
-		<result column="imei" property="IMEI" />
+		<result column="uuid" property="uuid" />
 		<result column="salt" property="salt" />
 		<result column="state" property="state" />
 		<result column="age" property="age" />
 		<result column="address" property="address" />
 		<result column="company" property="company" />
 		<result column="phone" property="phone" />
+		<result column="email" property="email" />
 		<result column="ip" property="IP" />
 		<result column="client" property="client" />
 		<result column="last_login_time" property="lastLoginTime" />
@@ -100,7 +101,7 @@
 	<insert id="insert" parameterType="User"
 			useGeneratedKeys="true"	keyProperty="id">
 		insert into tbl_user(<include refid="insertColumn" />)
-		values(#{userName},#{password},#{serialNumber},#{IMEI},#{salt},#{state},#{age},#{address},#{company},#{phone},#{IP},#{client},#{lastLoginTime},#{headURL},#{creator},#{createTime},#{dsc})
+		values(#{userName},#{password},#{serialNumber},#{uuid},#{salt},#{state},#{age},#{address},#{company},#{phone},#{email},#{IP},#{client},#{lastLoginTime},#{headURL},#{creator},#{createTime},#{dsc})
 	</insert>
 	<insert id="insertSelective" parameterType="User"
 			useGeneratedKeys="true"	keyProperty="id">
@@ -115,8 +116,8 @@
 			<if test="serialNumber != null">
 				serial_number,
 			</if>
-			<if test="IMEI != null">
-				imei,
+			<if test="uuid != null">
+				uuid,
 			</if>
 			<if test="salt != null">
 				salt,
@@ -135,6 +136,9 @@
 			</if>
 			<if test="phone != null">
 				phone,
+			</if>
+			<if test="email != null">
+				email,
 			</if>
 			<if test="IP != null">
 				ip,
@@ -168,8 +172,8 @@
 			<if test="serialNumber != null">
 				#{serialNumber},
 			</if>
-			<if test="IMEI != null">
-				#{IMEI},
+			<if test="uuid != null">
+				#{uuid},
 			</if>
 			<if test="salt != null">
 				#{salt},
@@ -188,6 +192,9 @@
 			</if>
 			<if test="phone != null">
 				#{phone},
+			</if>
+			<if test="email != null">
+				#{email},
 			</if>
 			<if test="IP != null">
 				#{IP},
@@ -235,8 +242,8 @@
 			<if test="serialNumber != null">
 				serial_number = #{serialNumber},
 			</if>
-			<if test="IMEI != null">
-				imei = #{IMEI},
+			<if test="uuid != null">
+				uuid = #{uuid},
 			</if>
 			<if test="salt != null">
 				salt = #{salt},
@@ -255,6 +262,9 @@
 			</if>
 			<if test="phone != null">
 				phone = #{phone},
+			</if>
+			<if test="email != null">
+				email = #{email},
 			</if>
 			<if test="IP != null">
 				ip = #{IP},
@@ -295,8 +305,8 @@
 			<if test="record.serialNumber != null">
 				serial_number = #{record.serialNumber},
 			</if>
-			<if test="record.IMEI != null">
-				imei = #{record.IMEI},
+			<if test="record.uuid != null">
+				uuid = #{record.uuid},
 			</if>
 			<if test="record.salt != null">
 				salt = #{record.salt},
@@ -315,6 +325,9 @@
 			</if>
 			<if test="record.phone != null">
 				phone = #{record.phone},
+			</if>
+			<if test="record.email != null">
+				email = #{record.email},
 			</if>
 			<if test="record.IP != null">
 				ip = #{record.IP},
@@ -344,7 +357,7 @@
 	</update>
 	<update id="updateByExample" parameterType="map">
 		update tbl_user set
-		username=#{record.userName},serial_number=#{record.serialNumber},imei=#{record.IMEI},salt=#{record.salt},state=#{record.state},age=#{record.age},password=#{record.password} ,address=#{record.address},company=#{record.company} ,phone=#{record.phone},ip=#{record.IP} ,client=#{record.client},last_login_time=#{record.lastLoginTime} ,head_url=#{record.headURL},creator=#{record.creator},create_time=#{record.createTime},dsc=#{record.dsc}
+		username=#{record.userName},serial_number=#{record.serialNumber},uuid=#{record.uuid},salt=#{record.salt},state=#{record.state},age=#{record.age},password=#{record.password} ,address=#{record.address},company=#{record.company} ,phone=#{record.phone},email=#{record.email},ip=#{record.IP} ,client=#{record.client},last_login_time=#{record.lastLoginTime} ,head_url=#{record.headURL},creator=#{record.creator},create_time=#{record.createTime},dsc=#{record.dsc}
 		<if test="_parameter != null">
 			<include refid="Update_By_Example_Where_Clause" />
 		</if>

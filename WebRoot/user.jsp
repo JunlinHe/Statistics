@@ -9,20 +9,8 @@
 <html>
 <head>
     <title>测试用户相关</title>
-    <style>
-        .panel{
-            border: 1px solid #2D2215;
-            padding: .5em;
-            display: inline-block;
-        }
-        .panel>h3{
-            text-align: center;
-        }
-        .panel .display{
-            background: pink;
-            min-height: 30px;
-        }
-    </style>
+
+    <link rel="stylesheet" type="text/css" href="app/css/style.css">
     <script type="text/javascript" src="app/lib/jquery.js"></script>
     <script type="text/javascript" src="app/lib/jquery.formautofill.min.js"></script>
 </head>
@@ -44,8 +32,8 @@
         <label for="password">密码</label>
         <input type="password" id="password" name="password" value="12345678">
         <br>
-        <label for="IMEI">机器序列号</label>
-        <input type="text" id="IMEI" name="IMEI" value="12345678">
+        <label for="uuid">机器序列号</label>
+        <input type="text" id="uuid" name="uuid" value="12345678">
         <br>
         <label for="age">年龄</label>
         <input type="number" id="age" name="age" value="19">
@@ -58,6 +46,9 @@
         <br>
         <label for="phone">电话</label>
         <input type="number" id="phone" name="phone" value="18500000000">
+        <br>
+        <label for="email">email</label>
+        <input type="email" id="email" name="email" value="86132587@qq.com">
         <br>
         <label for="IP">IP</label>
         <input type="text" id="IP" name="IP" value="127.0.0.1">
@@ -99,8 +90,8 @@
         <label for="password">密码</label>
         <input type="password"  name="password" >
         <br>
-        <label for="IMEI">机器序列号</label>
-        <input type="text"  name="IMEI" >
+        <label for="uuid">机器序列号</label>
+        <input type="text"  name="uuid" >
         <br>
         <label for="age">年龄</label>
         <input type="number"  name="age" >
@@ -113,6 +104,9 @@
         <br>
         <label for="phone">电话</label>
         <input type="number"  name="phone" >
+        <br>
+        <label for="email">email</label>
+        <input type="email"  name="email">
         <br>
         <label for="IP">IP</label>
         <input type="text"  name="IP" >
@@ -149,10 +143,10 @@ $(function(){
         console.log(data)
         $.ajax({
             url:'user/register',
-            data:data,
+            data:JSON.stringify({uuid:"哈哈我是uuid"}),
             dataType:'json',
             type:'post',
-            //contentType:'application/json;charset=UTF-8',
+            contentType:'application/json;charset=UTF-8',
             success:function(data){
                 console.log(data);
                 $('#regState').html(JSON.stringify(data));

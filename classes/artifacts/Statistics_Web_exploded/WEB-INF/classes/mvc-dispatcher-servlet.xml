@@ -5,18 +5,33 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans     
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
         http://www.springframework.org/schema/context 
-        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
         http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 
     <!-- 扫描controller（controller层注入） -->
     <context:component-scan base-package="com.sky.statistics.web.controller"/>
 
     <!-- 会自动注册DefaultAnnotationHandlerMapping与AnnotationMethodHandlerAdapter 两个bean,是spring MVC为@Controllers分发请求所必须的 -->
-    <!-- 指定自己定义的validator -->
-    <mvc:annotation-driven validator="validator"/>
+    <!-- 指定自己定义的validator 指点日期转换conversionService-->
+    <mvc:annotation-driven validator="validator" conversion-service="conversionService">
+        <!--@ResponseBody return json日期格式化配置-->
+        <mvc:message-converters >
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper">
+                    <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                        <property name="dateFormat">
+                            <bean class="java.text.SimpleDateFormat">
+                                <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
+                            </bean>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
     <!-- 以下 validator ConversionService 在使用 mvc:annotation-driven 会 自动注册 -->
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
@@ -47,12 +62,9 @@
         <property name="defaultLocale" value="zh_CN"/>
     </bean>
 
-    <mvc:default-servlet-handler/>
-
-
     <!-- 支持返回json(避免IE在ajax请求时，返回json出现下载 ) -->
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
-    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+    <bean id="messageConverters" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">
             <list>
                 <bean class="org.springframework.http.converter.StringHttpMessageConverter">
@@ -70,15 +82,14 @@
                             <value>application/json;charset=UTF-8</value>
                         </list>
                     </property>
-                    <property name="objectMapper" ref="customObjectMapper"></property>
                 </bean>
             </list>
         </property>
     </bean>
-    <bean id="customObjectMapper" class="com.sky.statistics.core.util.CustomObjectMapper"></bean>
     <!-- 支持返回json -->
 
-
+    <!--使用默认的Servlet来响应静态文件。-->
+    <mvc:default-servlet-handler/>
 
     <!-- 对模型视图添加前后缀 -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"

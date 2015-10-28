@@ -52,19 +52,16 @@ public class UserController {
 
     /**
      * 注册
+     * //@RequestBody User 接受json格式的字符串自动转成bean
      * */
-    @RequestMapping(value="/register",method= RequestMethod.POST)
+    @RequestMapping(value="/register",method= RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public Map<String,Object> insertUser(@Valid User us, BindingResult result)
+    public Map<String,Object> insertUser(@RequestBody User us,HttpServletRequest request,HttpServletResponse response)
     {
+        //response.setContentType("application/json; charset=UTF-8");
         //user参数不全返回失败操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
-        if (result.hasErrors()) {
-            //TODO 捕获异常
-            //System.out.println(result.getFieldErrors());
-            map.put("code", SysConst.OP_FAILD);
-            return map;
-        }
+        //TODO 如果用户提交了序列号则只记录日志
 
         //us初始化
         Date now = new Date();
@@ -72,7 +69,7 @@ public class UserController {
         String salt= StringUtil.getRandomString(9);
         us.setPassword(new Md5PwdEncoder().encodePassword(us.getPassword(),salt));
         //盐渍生成序列号
-        String serialNumber = new Md5PwdEncoder().encodePassword(us.getIMEI(), salt);
+        String serialNumber = new Md5PwdEncoder().encodePassword(us.getUuid(), salt);
         us.setSerialNumber(serialNumber);
         //保存盐渍
         us.setSalt(salt);
@@ -81,11 +78,12 @@ public class UserController {
         us.setCreator("me");
         us.setCreateTime(now);
         //持久化
-        int i = userService.insert(us);
+        userService.insert(us);
 
-        if(i>0){
+        us.setSalt("");//不返回salt
+        if(us.getId()>0L){
             map.put("code", SysConst.OP_SUCCESS);//操作成功
-            map.put("sn",serialNumber);//返回序列号
+            map.put("data", us);//用户信息
         }else
             map.put("code", SysConst.OP_FAILD);//操作失败
 
@@ -166,7 +164,7 @@ public class UserController {
     }
 
     /**
-     * 修改用户信息
+     * 删除用户信息
      * */
     @RequestMapping(value="/delete",method= RequestMethod.POST)
     @ResponseBody
@@ -186,6 +184,11 @@ public class UserController {
         return map;
     }
 
+    /**
+     * 测试返回json
+     * @param id
+     * @return
+     */
     @RequestMapping(value="/json",method= RequestMethod.POST)
     @ResponseBody//将内容或对象作为 HTTP 响应正文返回，使用@ResponseBody将会跳过视图处理部分，而是调用适合HttpMessageConverter，将返回值写入输出流。
     public Map<String,Object> testJson(@RequestParam Long id){

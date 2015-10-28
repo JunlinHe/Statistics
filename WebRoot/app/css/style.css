@@ -1,0 +1,12 @@
+.panel{
+    border: 1px solid #2D2215;
+    padding: .5em;
+    display: inline-block;
+}
+.panel>h3{
+    text-align: center;
+}
+.panel .display{
+    background: pink;
+    min-height: 30px;
+}
