@@ -10,7 +10,7 @@ import java.util.Date;
 @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY, getterVisibility= JsonAutoDetect.Visibility.NONE)
 public class User {
     private Long id;
-//    @NotEmpty(message="{user.username.null}")
+    @NotEmpty(message="{user.username.null}")
     private String userName;
 //    @NotEmpty(message="{user.password.null}")
 //    @Size(min=8, max=16,message="{user.password.size}")
@@ -26,7 +26,7 @@ public class User {
     private String company;
     private String phone;
     private String email;
-    private String IP;
+    private String ip;
     private String client;
     private Date lastLoginTime;
     private String headURL;
@@ -36,6 +36,10 @@ public class User {
 
 
     public User() {
+    }
+
+    public User(Long id) {
+        this.id = id;
     }
 
     public User(String userName, String password) {
@@ -116,11 +120,11 @@ public class User {
     }
 
     public String getIP() {
-        return IP;
+        return ip;
     }
 
-    public void setIP(String IP) {
-        this.IP = IP;
+    public void setIP(String ip) {
+        this.ip = ip;
     }
 
     public String getClient() {
@@ -210,7 +214,7 @@ public class User {
                 ", company='" + company + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
-                ", IP='" + IP + '\'' +
+                ", ip='" + ip + '\'' +
                 ", client='" + client + '\'' +
                 ", lastLoginTime=" + lastLoginTime +
                 ", headURL='" + headURL + '\'' +

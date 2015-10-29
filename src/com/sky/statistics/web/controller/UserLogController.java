@@ -1,5 +1,6 @@
 package com.sky.statistics.web.controller;
 
+import com.sky.statistics.core.annotation.SystemControllerLog;
 import com.sky.statistics.core.constant.SysConst;
 import com.sky.statistics.core.feature.orm.mybatis.Page;
 import com.sky.statistics.core.util.IPUtil;
@@ -40,6 +41,7 @@ public class UserLogController {
      * 查询用户日志
      * */
     @RequestMapping("/list")
+    @SystemControllerLog(description = "查询所有用户日志")
     public ModelAndView selectUserLog(){
         User us = new User();
         us.setId(1L);
@@ -56,6 +58,7 @@ public class UserLogController {
      * 查询用户日志
      * */
     @RequestMapping("/list1")
+    @SystemControllerLog(description = "查询所有用户日志")
     public ModelAndView selectUserLogPage(){
         User us = new User();
         us.setId(2L);
@@ -79,6 +82,7 @@ public class UserLogController {
      * */
     @RequestMapping("/getLog")
     @ResponseBody
+    @SystemControllerLog(description = "查询日志")
     public Map<String,Object> selectLog(HttpServletRequest request, UserLog usl){
         //user参数不全返回失败操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
@@ -101,8 +105,8 @@ public class UserLogController {
             criteria.andUserIDEqualTo(usl.getUser().getId());
         if( !StringUtil.isEmpty(usl.getArea()) )
             criteria.andAreaLike("%" + usl.getArea() + "%");
-        if( !StringUtil.isEmpty(usl.getUserSerialNum()) )
-            criteria.andUserSNEqualTo(usl.getUserSerialNum());
+        if( usl.getLogType() != 0 )
+            criteria.andLogTypeEqualTo(usl.getLogType());
         if( usl.getLogTime() != null )
             criteria.andLogTimeLessThanOrEqualTo(usl.getLogTime());
 
@@ -154,5 +158,45 @@ public class UserLogController {
         return map;
     }
 
+    /**
+     * 删除操作日志
+     * */
+    @RequestMapping(value="/delete",method= RequestMethod.POST, consumes = "application/json")
+    @ResponseBody
+    @SystemControllerLog(description = "删除日志")
+    public Map<String,Object> deleteLog(@RequestBody UserLog usl, HttpServletRequest request)
+    {
+        //返回操作状态码
+        Map<String,Object> map = new HashMap<String,Object>();
 
+        System.out.println("用户id："+usl.getUser().getId());
+
+        //提供id、user.id、area、userSN、logTime 五个查询条件
+        UserLogExample example = new UserLogExample();
+        //查询规则
+        UserLogExample.Criteria criteria = example.createCriteria();
+        criteria.relationUser();//关联用户表
+
+        System.out.println(usl);
+        //封装查询条件
+        if( usl.getId() != null )
+            criteria.andIdEqualTo(usl.getId());
+        if( usl.getUser().getId() != null )
+            criteria.andUserIDEqualTo(usl.getUser().getId());
+        if( !StringUtil.isEmpty(usl.getArea()) )
+            criteria.andAreaLike("%" + usl.getArea() + "%");
+        if( usl.getLogType() != 0 )
+            criteria.andLogTypeEqualTo(usl.getLogType());
+        if( usl.getLogTime() != null )
+            criteria.andLogTimeLessThanOrEqualTo(usl.getLogTime());
+        //执行操作
+        int i = userLogService.deleteByExample(example);
+
+        if(i > 0L)
+            map.put("code", SysConst.OP_SUCCESS);//操作成功
+        else
+            map.put("code", SysConst.OP_FAILD);//操作失败
+
+        return map;
+    }
 }

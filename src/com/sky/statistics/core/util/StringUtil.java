@@ -184,7 +184,7 @@ public class StringUtil {
      * @return
      */
     public static boolean isEmpty(String str) {
-        return !Pattern.compile("^\\\\s*$").matcher(str).matches() || str == null ? true : false;
+        return str == null || !Pattern.compile("^\\\\s*$").matcher(str).matches() ? true : false;
     }
 
     public static void main(String[] args) {

@@ -51,6 +51,11 @@ public class UserLogServiceImpl extends GenericServiceImpl<UserLog, Long> implem
     @Override
     public int deleteByUserID(User userID){ return userLogMapper.deleteByUserID(userID);}
 
+    @Override
+    public int deleteByExample(UserLogExample example) {
+        return userLogMapper.deleteByExample(example);
+    }
+
     /**
      * 分页条件查询
      *

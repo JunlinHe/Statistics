@@ -17,6 +17,7 @@ public interface UserLogService extends GenericService<UserLog, Long>{
 
     int deleteByUserID(User userID);
 
+    int deleteByExample(UserLogExample example);
     /**
      * 分页条件查询
      *

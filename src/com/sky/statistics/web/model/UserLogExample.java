@@ -318,73 +318,73 @@ public class UserLogExample {
         }
 
 
-        public Criteria andUserSNIsNull() {
-            addCriterion("user_serial_num is null");
+        public Criteria andLogTypeIsNull() {
+            addCriterion("log_type is null");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNIsNotNull() {
-            addCriterion("user_serial_num is not null");
+        public Criteria andLogTypeIsNotNull() {
+            addCriterion("log_type is not null");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNEqualTo(String value) {
-            addCriterion("user_serial_num =", value, "user_serial_num");
+        public Criteria andLogTypeEqualTo(int value) {
+            addCriterion("log_type =", value, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNNotEqualTo(String value) {
-            addCriterion("user_serial_num <>", value, "user_serial_num");
+        public Criteria andLogTypeNotEqualTo(int value) {
+            addCriterion("log_type <>", value, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNGreaterThan(String value) {
-            addCriterion("user_serial_num >", value, "user_serial_num");
+        public Criteria andLogTypeGreaterThan(int value) {
+            addCriterion("log_type >", value, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNGreaterThanOrEqualTo(String value) {
-            addCriterion("user_serial_num >=", value, "user_serial_num");
+        public Criteria andLogTypeGreaterThanOrEqualTo(int value) {
+            addCriterion("log_type >=", value, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNLessThan(String value) {
-            addCriterion("user_serial_num <", value, "user_serial_num");
+        public Criteria andLogTypeLessThan(int value) {
+            addCriterion("log_type <", value, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNLessThanOrEqualTo(String value) {
-            addCriterion("user_serial_num <=", value, "user_serial_num");
+        public Criteria andLogTypeLessThanOrEqualTo(int value) {
+            addCriterion("log_type <=", value, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNLike(String value) {
-            addCriterion("user_serial_num like", value, "user_serial_num");
+        public Criteria andLogTypeLike(int value) {
+            addCriterion("log_type like", value, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNNotLike(String value) {
-            addCriterion("user_serial_num not like", value, "user_serial_num");
+        public Criteria andLogTypeNotLike(int value) {
+            addCriterion("log_type not like", value, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNIn(List<String> values) {
-            addCriterion("user_serial_num in", values, "user_serial_num");
+        public Criteria andLogTypeIn(List<Integer> values) {
+            addCriterion("log_type in", values, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNNotIn(List<String> values) {
-            addCriterion("user_serial_num not in", values, "user_serial_num");
+        public Criteria andLogTypeNotIn(List<Integer> values) {
+            addCriterion("log_type not in", values, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNBetween(String value1, String value2) {
-            addCriterion("user_serial_num between", value1, value2, "user_serial_num");
+        public Criteria andLogTypeBetween(int value1, int value2) {
+            addCriterion("log_type between", value1, value2, "log_type");
             return (Criteria) this;
         }
 
-        public Criteria andUserSNNotBetween(String value1, String value2) {
-            addCriterion("user_serial_num not between", value1, value2, "user_serial_num");
+        public Criteria andLogTypeNotBetween(int value1, int value2) {
+            addCriterion("log_type not between", value1, value2, "log_type");
             return (Criteria) this;
         }
 

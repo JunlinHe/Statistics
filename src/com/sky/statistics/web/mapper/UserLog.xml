@@ -6,7 +6,7 @@
 
 	<!--插入字段-->
 	<sql id="insertColumn">
-		user_id, user_serial_num, log_info, log_time, ip, area, method_name, model_name
+		user_id, log_type,err_code,err_info, log_info, log_time, ip, area, method_name, model_name
 	</sql>
 
 	<!--基本返回字段-->
@@ -74,41 +74,43 @@
 		</where>
 	</sql>
 	<!-- 为了返回list 类型而定义的returnMap -->
+	<!--<resultMap log_type="UserLog" id="resultListUserLog">-->
+		<!--<id column="log_id" property="id" />-->
+		<!--<result column="log_usn" property="logType" />-->
+		<!--<result column="log_info" property="logInfo" />-->
+		<!--<result column="log_time" property="logTime" />-->
+		<!--<result column="log_ip" property="ip" />-->
+		<!--<result column="log_area" property="area" />-->
+		<!--<result column="log_methn" property="methodName" />-->
+		<!--<result column="log_modn" property="modelName" />-->
+		<!--<association property="user" javaType="User" >-->
+			<!--<id column="u_id" property="id" />-->
+			<!--<result column="u_n" property="userName" />-->
+			<!--<result column="u_pw" property="password" />-->
+			<!--<result column="u_sn" property="serialNumber" />-->
+			<!--<result column="u_imei" property="IMEI" />-->
+			<!--<result column="u_salt" property="salt" />-->
+			<!--<result column="u_age" property="age" />-->
+			<!--<result column="u_addr" property="address" />-->
+			<!--<result column="u_comp" property="company" />-->
+			<!--<result column="u_phone" property="phone" />-->
+			<!--<result column="u_ip" property="ip" />-->
+			<!--<result column="u_client" property="client" />-->
+			<!--<result column="u_llt" property="lastLoginTime" />-->
+			<!--<result column="u_hu" property="headURL" />-->
+			<!--<result column="u_c" property="creator" />-->
+			<!--<result column="u_ct" property="createTime" />-->
+			<!--<result column="u_dsc" property="dsc" />-->
+		<!--</association>-->
+	<!--</resultMap>-->
 	<resultMap type="UserLog" id="resultListUserLog">
-		<id column="log_id" property="id" />
-		<result column="log_usn" property="userSerialNum" />
-		<result column="log_info" property="logInfo" />
-		<result column="log_time" property="logTime" />
-		<result column="log_ip" property="IP" />
-		<result column="log_area" property="area" />
-		<result column="log_methn" property="methodName" />
-		<result column="log_modn" property="modelName" />
-		<association property="user" javaType="User" >
-			<id column="u_id" property="id" />
-			<result column="u_n" property="userName" />
-			<result column="u_pw" property="password" />
-			<result column="u_sn" property="serialNumber" />
-			<result column="u_imei" property="IMEI" />
-			<result column="u_salt" property="salt" />
-			<result column="u_age" property="age" />
-			<result column="u_addr" property="address" />
-			<result column="u_comp" property="company" />
-			<result column="u_phone" property="phone" />
-			<result column="u_ip" property="IP" />
-			<result column="u_client" property="client" />
-			<result column="u_llt" property="lastLoginTime" />
-			<result column="u_hu" property="headURL" />
-			<result column="u_c" property="creator" />
-			<result column="u_ct" property="createTime" />
-			<result column="u_dsc" property="dsc" />
-		</association>
-	</resultMap>
-	<resultMap type="UserLog" id="test">
 		<id column="id" property="id" />
-		<result column="user_serial_num" property="userSerialNum" />
+		<result column="log_type" property="logType" />
+		<result column="err_code" property="errCode" />
+		<result column="err_info" property="errInfo" />
 		<result column="log_info" property="logInfo" />
 		<result column="log_time" property="logTime" />
-		<result column="ip" property="IP" />
+		<result column="ip" property="ip" />
 		<result column="area" property="area" />
 		<result column="method_name" property="methodName" />
 		<result column="model_name" property="modelName" />
@@ -117,13 +119,15 @@
 			<result column="username" property="userName" />
 			<result column="password" property="password" />
 			<result column="serial_number" property="serialNumber" />
-			<result column="imei" property="IMEI" />
+			<result column="uuid" property="uuid" />
 			<result column="salt" property="salt" />
+			<result column="state" property="state" />
 			<result column="age" property="age" />
 			<result column="address" property="address" />
 			<result column="company" property="company" />
 			<result column="phone" property="phone" />
-			<result column="ip" property="IP" />
+			<result column="email" property="email" />
+			<result column="ip" property="ip" />
 			<result column="client" property="client" />
 			<result column="last_login_time" property="lastLoginTime" />
 			<result column="head_url" property="headURL" />
@@ -136,7 +140,7 @@
 	<insert id="insert" parameterType="UserLog"
 			useGeneratedKeys="true"	keyProperty="id">
 		insert into tbl_user_log(<include refid="insertColumn" />)
-		values(#{user.id},#{userSerialNum},#{logInfo},#{logTime},#{IP},#{area},#{methodName},#{modelName})
+		values(#{user.id},#{logType},#{errCode},#{errInfo},#{logInfo},#{logTime},#{ip},#{area},#{methodName},#{modelName})
 	</insert>
 	<insert id="insertSelective" parameterType="UserLog"
 			useGeneratedKeys="true"	keyProperty="id">
@@ -145,8 +149,14 @@
 			<if test="user != null">
 				user_id,
 			</if>
-			<if test="userSerialNum != null">
-				user_serial_num,
+			<if test="logType != null">
+				log_type,
+			</if>
+			<if test="errCode != null">
+				err_code,
+			</if>
+			<if test="errInfo != null">
+				err_info,
 			</if>
 			<if test="logInfo != null">
 				log_info,
@@ -154,7 +164,7 @@
 			<if test="logTime != null">
 				log_time,
 			</if>
-			<if test="IP != null">
+			<if test="ip != null">
 				ip,
 			</if>
 			<if test="area != null">
@@ -171,8 +181,14 @@
 			<if test="user != null">
 				#{user.id},
 			</if>
-			<if test="userSerialNum != null">
-				#{userSerialNum},
+			<if test="logType != null">
+				#{logType},
+			</if>
+			<if test="errCode != null">
+				#{errCode},
+			</if>
+			<if test="errInfo != null">
+				#{errInfo},
 			</if>
 			<if test="logInfo != null">
 				#{logInfo},
@@ -180,8 +196,8 @@
 			<if test="logTime != null">
 				#{logTime},
 			</if>
-			<if test="IP != null">
-				#{IP},
+			<if test="ip != null">
+				#{ip},
 			</if>
 			<if test="area != null">
 				#{area},
@@ -201,6 +217,12 @@
 	<delete id="deleteByUserID" parameterType="User">
 		delete from tbl_user_log where user_id=#{id}
 	</delete>
+	<delete id="deleteByExample" parameterType="UserLogExample">
+		delete from tbl_user_log
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
 
 	<update id="updateByPrimaryKeySelective" parameterType="UserLog" >
 		update tbl_user_log
@@ -208,8 +230,17 @@
 			<if test="user.id != null">
 				user_id = #{user.id},
 			</if>
-			<if test="userSerialNum != null">
-				user_serial_num = #{userSerialNum},
+			<if test="logType != null">
+				log_type = #{logType},
+			</if>
+			<if test="errCode != null">
+				err_code = #{errCode},
+			</if>
+			<if test="errInfo != null">
+				err_info = #{errInfo},
+			</if>
+			<if test="logType != null">
+				log_type = #{logType},
 			</if>
 			<if test="logInfo != null">
 				log_info = #{logInfo},
@@ -217,8 +248,8 @@
 			<if test="logtime != null">
 				log_time = #{logtime},
 			</if>
-			<if test="IP != null">
-				ip = #{IP},
+			<if test="ip != null">
+				ip = #{ip},
 			</if>
 			<if test="area != null">
 				area = #{area},
@@ -241,8 +272,14 @@
 			<if test="record.user.id != null">
 				user_id = #{record.user.id},
 			</if>
-			<if test="record.userSerialNum != null">
-				user_serial_num = #{record.userSerialNum},
+			<if test="record.logType != null">
+				log_type = #{record.logType},
+			</if>
+			<if test="record.errCode != null">
+				err_code = #{record.errCode},
+			</if>
+			<if test="record.errInfo != null">
+				err_info = #{record.errInfo},
 			</if>
 			<if test="record.logInfo != null">
 				log_info = #{record.logInfo},
@@ -250,8 +287,8 @@
 			<if test="record.logTime != null">
 				log_time = #{record.logTime},
 			</if>
-			<if test="record.IP != null">
-				ip = #{record.IP},
+			<if test="record.ip != null">
+				ip = #{record.ip},
 			</if>
 			<if test="record.area != null">
 				area = #{record.area},
@@ -269,7 +306,7 @@
 	</update>
 	<update id="updateByExample" parameterType="map">
 		update tbl_user_log set
-		user_id=#{user.id},serial_number=#{serialNumber},log_info=#{logInfo},log_time=#{logTime},ip=#{IP},area=#{area},method_name=#{methodName} ,model_name=#{modelName}
+		user_id=#{user.id},log_type=#{logType},err_code=#{errCode},err_info=#{errInfo},log_info=#{logInfo},log_time=#{logTime},ip=#{ip},area=#{area},method_name=#{methodName} ,model_name=#{modelName}
 		<if test="_parameter != null">
 			<include refid="Update_By_Example_Where_Clause" />
 		</if>
@@ -298,9 +335,9 @@
 	</select>
 	<!-- 通过用户ID查找 -->
 	<!--重点：当使用bean作为返回类型时，parameterType必须为该bean类型，并且传入参数名应与bean关联字段一致-->
-	<select id="selectUserLog" parameterType="User" resultMap="test">
+	<select id="selectUserLog" parameterType="User" resultMap="resultListUserLog">
 		select usl.*,us.*
--- 		usl.id log_id, usl.user_serial_num log_usn,usl.log_info log_info, usl.log_time log_time, usl.ip log_ip, usl.method_name log_methn, usl.model_name log_modn,
+-- 		usl.id log_id, usl.log_type log_usn,usl.log_info log_info, usl.log_time log_time, usl.ip log_ip, usl.method_name log_methn, usl.model_name log_modn,
 -- 		us.id u_id, us.username u_n, us.password u_pw,us.serial_number u_sn, us.imei u_imei, us.salt u_salt,us.age u_age, us.address u_addr,us.company u_comp,us.phone u_phone,us.ip u_ip,us.client u_client,us.last_login_time u_llt,us.head_url u_hu,us.creator u_c,us.create_time u_ct,us.dsc u_dsc
 		from tbl_user_log usl, tbl_user us
 		where usl.user_id = us.id and usl.user_id=${id}
@@ -312,7 +349,7 @@
 		where id = #{id}
 	</select>
 	<!-- 分页条件查询 -->
-	<select id="selectByExampleAndPage" resultMap="test" parameterType="UserLogExample">
+	<select id="selectByExampleAndPage" resultMap="resultListUserLog" parameterType="UserLogExample">
 		select
 		<if test="distinct">
 			distinct

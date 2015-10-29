@@ -8,10 +8,12 @@ import java.util.Date;
 public class UserLog {
     private Long id;
     private User user;
-    private String userSerialNum;
+    private int logType;
     private String logInfo;
+    private String errCode;
+    private String errInfo;
     private Date logTime;
-    private String IP;
+    private String ip;
     private String area;
     private String methodName;
     private String modelName;
@@ -36,12 +38,12 @@ public class UserLog {
         this.user = user;
     }
 
-    public String getUserSerialNum() {
-        return userSerialNum;
+    public int getLogType() {
+        return logType;
     }
 
-    public void setUserSerialNum(String userSerialNum) {
-        this.userSerialNum = userSerialNum;
+    public void setLogType(int logType) {
+        this.logType = logType;
     }
 
     public String getLogInfo() {
@@ -61,11 +63,11 @@ public class UserLog {
     }
 
     public String getIP() {
-        return IP;
+        return ip;
     }
 
-    public void setIP(String IP) {
-        this.IP = IP;
+    public void setIP(String ip) {
+        this.ip = ip;
     }
 
     public String getMethodName() {
@@ -90,5 +92,21 @@ public class UserLog {
 
     public void setArea(String area) {
         this.area = area;
+    }
+
+    public String getErrCode() {
+        return errCode;
+    }
+
+    public void setErrCode(String errCode) {
+        this.errCode = errCode;
+    }
+
+    public String getErrInfo() {
+        return errInfo;
+    }
+
+    public void setErrInfo(String errInfo) {
+        this.errInfo = errInfo;
     }
 }

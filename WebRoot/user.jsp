@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="app/css/style.css">
     <script type="text/javascript" src="app/lib/jquery.js"></script>
     <script type="text/javascript" src="app/lib/jquery.formautofill.min.js"></script>
+    <script type="text/javascript" src="app/js/app.js"></script>
 </head>
 
 <body>
@@ -25,7 +26,7 @@
 
 <div class="panel">
     <h3>注册</h3>
-    <form id="regForm">
+    <form id="regForm" method="post" action="user/register" enctype="">
         <label for="userName">姓名</label>
         <input type="text" id="userName" name="userName">
         <br>
@@ -50,8 +51,8 @@
         <label for="email">email</label>
         <input type="email" id="email" name="email" value="86132587@qq.com">
         <br>
-        <label for="IP">IP</label>
-        <input type="text" id="IP" name="IP" value="127.0.0.1">
+        <label for="ip">ip</label>
+        <input type="text" id="ip" name="ip" value="127.0.0.1">
         <br>
         <label for="client">客户端类型</label>
         <input type="text" id="client" name="client" value="1">
@@ -108,8 +109,8 @@
         <label for="email">email</label>
         <input type="email"  name="email">
         <br>
-        <label for="IP">IP</label>
-        <input type="text"  name="IP" >
+        <label for="ip">ip</label>
+        <input type="text"  name="ip" >
         <br>
         <label for="client">客户端类型</label>
         <input type="text"  name="client" >
@@ -139,11 +140,11 @@
 $(function(){
 
     $('#submitForm').on('click',function(){
-        var data = $('#regForm').serialize();
+        var data = $('#regForm').serializeJson();
         console.log(data)
         $.ajax({
             url:'user/register',
-            data:JSON.stringify({uuid:"哈哈我是uuid"}),
+            data:JSON.stringify(data),
             dataType:'json',
             type:'post',
             contentType:'application/json;charset=UTF-8',
@@ -152,7 +153,6 @@ $(function(){
                 $('#regState').html(JSON.stringify(data));
             }
         });
-
     });
 
 

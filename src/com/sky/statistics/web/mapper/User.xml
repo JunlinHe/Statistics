@@ -86,7 +86,7 @@
 		<result column="company" property="company" />
 		<result column="phone" property="phone" />
 		<result column="email" property="email" />
-		<result column="ip" property="IP" />
+		<result column="ip" property="ip" />
 		<result column="client" property="client" />
 		<result column="last_login_time" property="lastLoginTime" />
 		<result column="head_url" property="headURL" />
@@ -101,7 +101,7 @@
 	<insert id="insert" parameterType="User"
 			useGeneratedKeys="true"	keyProperty="id">
 		insert into tbl_user(<include refid="insertColumn" />)
-		values(#{userName},#{password},#{serialNumber},#{uuid},#{salt},#{state},#{age},#{address},#{company},#{phone},#{email},#{IP},#{client},#{lastLoginTime},#{headURL},#{creator},#{createTime},#{dsc})
+		values(#{userName},#{password},#{serialNumber},#{uuid},#{salt},#{state},#{age},#{address},#{company},#{phone},#{email},#{ip},#{client},#{lastLoginTime},#{headURL},#{creator},#{createTime},#{dsc})
 	</insert>
 	<insert id="insertSelective" parameterType="User"
 			useGeneratedKeys="true"	keyProperty="id">
@@ -140,7 +140,7 @@
 			<if test="email != null">
 				email,
 			</if>
-			<if test="IP != null">
+			<if test="ip != null">
 				ip,
 			</if>
 			<if test="client != null">
@@ -196,8 +196,8 @@
 			<if test="email != null">
 				#{email},
 			</if>
-			<if test="IP != null">
-				#{IP},
+			<if test="ip != null">
+				#{ip},
 			</if>
 			<if test="client != null">
 				#{client},
@@ -266,8 +266,8 @@
 			<if test="email != null">
 				email = #{email},
 			</if>
-			<if test="IP != null">
-				ip = #{IP},
+			<if test="ip != null">
+				ip = #{ip},
 			</if>
 			<if test="client != null">
 				client = #{client},
@@ -329,8 +329,8 @@
 			<if test="record.email != null">
 				email = #{record.email},
 			</if>
-			<if test="record.IP != null">
-				ip = #{record.IP},
+			<if test="record.ip != null">
+				ip = #{record.ip},
 			</if>
 			<if test="record.client != null">
 				client = #{record.client},
@@ -357,7 +357,7 @@
 	</update>
 	<update id="updateByExample" parameterType="map">
 		update tbl_user set
-		username=#{record.userName},serial_number=#{record.serialNumber},uuid=#{record.uuid},salt=#{record.salt},state=#{record.state},age=#{record.age},password=#{record.password} ,address=#{record.address},company=#{record.company} ,phone=#{record.phone},email=#{record.email},ip=#{record.IP} ,client=#{record.client},last_login_time=#{record.lastLoginTime} ,head_url=#{record.headURL},creator=#{record.creator},create_time=#{record.createTime},dsc=#{record.dsc}
+		username=#{record.userName},serial_number=#{record.serialNumber},uuid=#{record.uuid},salt=#{record.salt},state=#{record.state},age=#{record.age},password=#{record.password} ,address=#{record.address},company=#{record.company} ,phone=#{record.phone},email=#{record.email},ip=#{record.ip} ,client=#{record.client},last_login_time=#{record.lastLoginTime} ,head_url=#{record.headURL},creator=#{record.creator},create_time=#{record.createTime},dsc=#{record.dsc}
 		<if test="_parameter != null">
 			<include refid="Update_By_Example_Where_Clause" />
 		</if>

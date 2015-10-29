@@ -75,7 +75,6 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
         return userMapper.deleteByExample(example);
     }
 
-
     @Override
     public int updateByExample(@Param("record") User record, @Param("example") UserExample example) {
         return userMapper.updateByExample(record, example);
