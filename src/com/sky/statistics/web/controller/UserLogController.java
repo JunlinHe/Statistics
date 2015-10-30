@@ -3,16 +3,14 @@ package com.sky.statistics.web.controller;
 import com.sky.statistics.core.annotation.SystemControllerLog;
 import com.sky.statistics.core.constant.SysConst;
 import com.sky.statistics.core.feature.orm.mybatis.Page;
-import com.sky.statistics.core.util.IPUtil;
+import com.sky.statistics.core.util.ContextUtil;
 import com.sky.statistics.core.util.StringUtil;
 import com.sky.statistics.web.dao.IUserLogMapper;
 import com.sky.statistics.web.model.User;
-import com.sky.statistics.web.model.UserExample;
 import com.sky.statistics.web.model.UserLog;
 import com.sky.statistics.web.model.UserLogExample;
 import com.sky.statistics.web.service.UserLogService;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,9 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +36,6 @@ public class UserLogController {
      * 查询用户日志
      * */
     @RequestMapping("/list")
-    @SystemControllerLog(description = "查询所有用户日志")
     public ModelAndView selectUserLog(){
         User us = new User();
         us.setId(1L);
@@ -82,7 +76,6 @@ public class UserLogController {
      * */
     @RequestMapping("/getLog")
     @ResponseBody
-    @SystemControllerLog(description = "查询日志")
     public Map<String,Object> selectLog(HttpServletRequest request, UserLog usl){
         //user参数不全返回失败操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
@@ -139,8 +132,8 @@ public class UserLogController {
         System.out.println("用户id："+usl.getUser().getId());
 
         //初始化
-        String ip = IPUtil.getIpAddr(request);
-        String[] addr = IPUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
+        String ip = ContextUtil.getIpAddr(request);
+        String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
         usl.setIP(ip);
         usl.setArea(StringUtil.joinIgnoreEmptyStr(",", addr));
         usl.setLogTime(new Date());
@@ -163,7 +156,6 @@ public class UserLogController {
      * */
     @RequestMapping(value="/delete",method= RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    @SystemControllerLog(description = "删除日志")
     public Map<String,Object> deleteLog(@RequestBody UserLog usl, HttpServletRequest request)
     {
         //返回操作状态码

@@ -76,6 +76,15 @@
     <!-- 启用对事务注解的支持 -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
+    <!-- 日志处理的线程池 begin，这里使用注解方式处理日志-->
+    <bean id="logTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" destroy-method="destroy">
+        <property name="corePoolSize" value="1"/>
+        <property name="keepAliveSeconds" value="200"/>
+        <property name="maxPoolSize" value="2"/>
+        <property name="queueCapacity" value="30"/>
+    </bean>
+    <!-- 日志处理的线程池 end -->
+
     <!-- Cache配置 -->
     <cache:annotation-driven cache-manager="cacheManager"/>
     <bean id="ehCacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"

@@ -101,5 +101,5 @@
     </bean>
 
     <!-- 配置使Spring mvc采用CGLIB代理 -->
-    <aop:aspectj-autoproxy proxy-target-class="true" />
+    <!--<aop:aspectj-autoproxy proxy-target-class="true" />-->
 </beans>

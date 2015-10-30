@@ -1,5 +1,6 @@
 package com.sky.statistics.web.service.impl;
 
+import com.sky.statistics.core.annotation.SystemServiceLog;
 import com.sky.statistics.core.feature.orm.mybatis.Page;
 import com.sky.statistics.core.generic.GenericDao;
 import com.sky.statistics.core.generic.GenericServiceImpl;

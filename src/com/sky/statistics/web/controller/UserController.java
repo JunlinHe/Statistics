@@ -2,10 +2,9 @@ package com.sky.statistics.web.controller;
 
 import com.sky.statistics.core.annotation.SystemControllerLog;
 import com.sky.statistics.core.constant.SysConst;
-import com.sky.statistics.core.exception.UserException;
 import com.sky.statistics.core.feature.encoder.Md5PwdEncoder;
 import com.sky.statistics.core.feature.orm.mybatis.Page;
-import com.sky.statistics.core.util.IPUtil;
+import com.sky.statistics.core.util.ContextUtil;
 import com.sky.statistics.core.util.StringUtil;
 import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserExample;
@@ -13,15 +12,12 @@ import com.sky.statistics.web.model.UserLog;
 import com.sky.statistics.web.service.UserLogService;
 import com.sky.statistics.web.service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.util.*;
 
 @Controller
@@ -37,7 +33,6 @@ public class UserController {
      * 查询所有用户
      * */
     @RequestMapping(value="/list")
-    @SystemControllerLog(description = "查询所有用户信息")
     public ModelAndView selectByPram(HttpServletRequest request){
         int pageNo = Integer.parseInt(request.getParameter("pageNo"));
         int pageSize = Integer.parseInt(request.getParameter("pageSize"));
@@ -58,9 +53,8 @@ public class UserController {
      * //@RequestBody User 接受json格式的字符串自动转成bean
      * */
     @RequestMapping(value="/register",method= RequestMethod.POST, consumes = "application/json")
-//    @ResponseBody
-    @SystemControllerLog(description = "注册")
-    public String insertUser(@RequestBody User us,RedirectAttributes arr,HttpServletRequest request,HttpServletResponse response)
+    @ResponseBody
+    public Map<String,Object> insertUser(@RequestBody User us,HttpServletRequest request,HttpServletResponse response)
     {
         //response.setContentType("application/json; charset=UTF-8");
         Map<String,Object> map = new HashMap<String,Object>();
@@ -72,6 +66,8 @@ public class UserController {
 
         if(userList.size() == 0){
 
+            String ip= ContextUtil.getClientIp();
+            String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
             //user初始化
             Date now = new Date();
             //获取随机码执行盐渍算法
@@ -82,7 +78,8 @@ public class UserController {
             us.setSerialNumber(serialNumber);
             //保存盐渍随机码
             us.setSalt(salt);
-
+            us.setIP(ip);
+            us.setAddress(StringUtil.isEmpty(us.getAddress()) ? StringUtil.joinIgnoreEmptyStr(",",addr) : us.getAddress());
             us.setLastLoginTime(now);
             us.setCreator("me");
             us.setCreateTime(now);
@@ -90,21 +87,30 @@ public class UserController {
             userService.insert(us);
 
             us.setSalt("");//不返回salt
+
+            //将用户信息写入session
+            ContextUtil.setContextLoginUser( us);
         }
 
         //已注册则添加日志
         us = userList.size() > 0 ? userList.get(0) : us;
-//        int logResult = log(request,us,"用户登录");
-//        if(logResult > 0){
-//            map.put("code", SysConst.OP_SUCCESS);//操作成功
-//            map.put("data", us);//用户信息
-//        }else
-//            map.put("code", SysConst.OP_FAILD);//操作失败
+        int logResult = log(us,"用户登录");
+        if(logResult > 0){
+            map.put("code", SysConst.OP_SUCCESS);//操作成功
+            map.put("data", us);//用户信息
 
-        arr.addFlashAttribute("us",us);
-        return "redirect:login";
+        }else
+            map.put("code", SysConst.OP_FAILD);//操作失败
+
+        return map;
     }
 
+    /**
+     * 查询用户是否存在
+     * @param uuid
+     * @param sn
+     * @return
+     */
     private List<User> checkUser(String uuid, String sn){
 
         //查询
@@ -114,9 +120,15 @@ public class UserController {
         return userService.selectByExampleAndPage(page, example);
     }
 
-    private int log(HttpServletRequest request, User user, String logInfo){
-        String ip = IPUtil.getIpAddr(request);
-        String[] addr = IPUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
+    /**
+     * 记录日志
+     * @param user
+     * @param logInfo
+     * @return
+     */
+    private int log( User user, String logInfo){
+        String ip= ContextUtil.getClientIp();
+        String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
         UserLog usl = new UserLog();
 
         usl.setUser(user);
@@ -137,8 +149,7 @@ public class UserController {
      * */
     @RequestMapping(value="/login",method= RequestMethod.GET)
     @ResponseBody
-    @SystemControllerLog(description = "用户登录")
-    public Map<String,Object> login( User us)
+    public Map<String,Object> login( User us, HttpServletRequest request)
     {
         //返回操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
@@ -151,9 +162,12 @@ public class UserController {
         //查询
         User user = userService.authentication(us);
 
-        if(user!=null && user.getId()>0)
+        if(user!=null && user.getId()>0){
             map.put("code", SysConst.OP_SUCCESS);//操作成功
-        else{
+            map.put("data", user);
+            //将用户信息写入session
+            ContextUtil.setContextLoginUser(user);
+        }else{
             map.put("code", SysConst.OP_FAILD);//操作失败
             //throw new UserException("登录失败");
         }
@@ -167,7 +181,6 @@ public class UserController {
      * */
     @RequestMapping(value="/select",method= RequestMethod.POST)
     @ResponseBody
-    @SystemControllerLog(description = "查询用户信息")
     public Map<String,Object> selectUserInfo(User us)
     {
         //返回操作状态码
@@ -196,7 +209,6 @@ public class UserController {
      * */
     @RequestMapping(value="/update",method= RequestMethod.POST)
     @ResponseBody
-    @SystemControllerLog(description = "修改用户信息")
     public Map<String,Object> updateUserInfo(User us)
     {
         //返回操作状态码
@@ -218,7 +230,6 @@ public class UserController {
      * */
     @RequestMapping(value="/delete",method= RequestMethod.POST)
     @ResponseBody
-    @SystemControllerLog(description = "删除用户信息")
     public Map<String,Object> deleteUserInfo(@RequestParam Long id)
     {
         //返回操作状态码
@@ -242,7 +253,6 @@ public class UserController {
      */
     @RequestMapping(value="/json",method= RequestMethod.POST)
     @ResponseBody//将内容或对象作为 HTTP 响应正文返回，使用@ResponseBody将会跳过视图处理部分，而是调用适合HttpMessageConverter，将返回值写入输出流。
-    @SystemControllerLog(description = "测试返回json")
     public Map<String,Object> testJson(@RequestParam Long id){
 
         Map<String,Object> map = new HashMap<String,Object>();

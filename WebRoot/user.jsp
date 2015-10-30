@@ -36,6 +36,9 @@
         <label for="uuid">机器序列号</label>
         <input type="text" id="uuid" name="uuid" value="12345678">
         <br>
+        <label for="serialNumber">机器序列号</label>
+        <input type="text" id="serialNumber" name="serialNumber" value="12345678">
+        <br>
         <label for="age">年龄</label>
         <input type="number" id="age" name="age" value="19">
         <br>

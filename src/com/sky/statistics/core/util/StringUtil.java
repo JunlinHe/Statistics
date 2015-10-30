@@ -184,7 +184,7 @@ public class StringUtil {
      * @return
      */
     public static boolean isEmpty(String str) {
-        return str == null || !Pattern.compile("^\\\\s*$").matcher(str).matches() ? true : false;
+        return str == null || Pattern.compile("^\\\\s*$").matcher(str).matches() ? true : false;
     }
 
     public static void main(String[] args) {
@@ -193,6 +193,9 @@ public class StringUtil {
         t[2] = t[3] = "";
         System.out.println(StringUtil.joinIgnoreEmptyStr(",", t));
 
-        System.out.println(StringUtil.isEmpty(" "));
+        String str = "7fb38473e3e65d209a488d1fbdf76e9a";
+        System.out.println(StringUtil.isEmpty(str));
+
+        System.out.println(Pattern.compile("^\\\\s*$").matcher(str).matches());
     }
 }

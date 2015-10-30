@@ -1,5 +1,6 @@
 package com.sky.statistics.web.service.impl;
 
+import com.sky.statistics.core.annotation.SystemServiceLog;
 import com.sky.statistics.core.feature.orm.mybatis.Page;
 import com.sky.statistics.core.generic.GenericDao;
 import com.sky.statistics.core.generic.GenericServiceImpl;
@@ -30,6 +31,7 @@ public class UserLogServiceImpl extends GenericServiceImpl<UserLog, Long> implem
     }
 
     @Override
+    @SystemServiceLog(description = "删除日志")
     public int delete(Long id) {
         return userLogMapper.deleteByPrimaryKey(id);
     }
@@ -49,9 +51,11 @@ public class UserLogServiceImpl extends GenericServiceImpl<UserLog, Long> implem
     public List<UserLog> selectUserLog(User userID){ return userLogMapper.selectUserLog(userID);}
 
     @Override
+    @SystemServiceLog(description = "根据用户ID删除日志")
     public int deleteByUserID(User userID){ return userLogMapper.deleteByUserID(userID);}
 
     @Override
+    @SystemServiceLog(description = "根据条件删除日志")
     public int deleteByExample(UserLogExample example) {
         return userLogMapper.deleteByExample(example);
     }
@@ -64,5 +68,6 @@ public class UserLogServiceImpl extends GenericServiceImpl<UserLog, Long> implem
      * @return
      */
     @Override
+    @SystemServiceLog(description = "查询日志")
     public List<UserLog> selectByExampleAndPage(Page<UserLog> page, UserLogExample example){ return userLogMapper.selectByExampleAndPage(page, example);}
 }
