@@ -12,15 +12,15 @@ public class User {
     private Long id;
     @NotEmpty(message="{user.username.null}")
     private String userName;
-//    @NotEmpty(message="{user.password.null}")
-//    @Size(min=8, max=16,message="{user.password.size}")
+    @NotEmpty(message="{user.password.null}")
+    @Size(min=8, max=16,message="{user.password.size}")
     private String password;
     private String serialNumber;
-//    @NotEmpty(message="{user.imei.null}")
+    @NotEmpty(message="{user.imei.null}")
     private String uuid;
     private String salt;
     private int state;
-//    @Max(value=150,message="{user.age.error}")
+    @Max(value=150,message="{user.age.error}")
     private int age;
     private String address;
     private String company;

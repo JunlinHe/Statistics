@@ -33,7 +33,7 @@
         <label for="password">密码</label>
         <input type="password" id="password" name="password" value="12345678">
         <br>
-        <label for="uuid">机器序列号</label>
+        <label for="uuid">机器识别码</label>
         <input type="text" id="uuid" name="uuid" value="12345678">
         <br>
         <label for="serialNumber">机器序列号</label>

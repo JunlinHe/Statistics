@@ -12,12 +12,15 @@ import com.sky.statistics.web.model.UserLog;
 import com.sky.statistics.web.service.UserLogService;
 import com.sky.statistics.web.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.*;
 
 @Controller
@@ -54,7 +57,7 @@ public class UserController {
      * */
     @RequestMapping(value="/register",method= RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public Map<String,Object> insertUser(@RequestBody User us,HttpServletRequest request,HttpServletResponse response)
+    public Map<String,Object> insertUser(@RequestBody @Valid User us,BindingResult result, HttpServletRequest request,HttpServletResponse response)
     {
         //response.setContentType("application/json; charset=UTF-8");
         Map<String,Object> map = new HashMap<String,Object>();
@@ -62,49 +65,95 @@ public class UserController {
         String sn = us.getSerialNumber();
         String uuid = us.getUuid();
 
-        List<User> userList = StringUtil.isEmpty(sn) ? new ArrayList<User>() : checkUser(uuid, sn);
+        //根据提交序列号判断登录或注册，序列号为空视为注册请求
+        if( StringUtil.isEmpty(sn)){
+            //验证参数提交参数格式
+            if (result.hasErrors()) {
+                List<ObjectError> errorList = result.getAllErrors();
+                List<String> errMsgList = new ArrayList<String>();
+                for(ObjectError error : errorList){
+                    errMsgList.add(error.getDefaultMessage());
+                }
 
-        if(userList.size() == 0){
+                map.put(SysConst.RETURN_CODE, SysConst.OP_FAILD);
+                map.put(SysConst.RETURN_MSG, errMsgList);
+                return map;
+            }
 
-            String ip= ContextUtil.getClientIp();
-            String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
-            //user初始化
-            Date now = new Date();
-            //获取随机码执行盐渍算法
-            String salt= StringUtil.getRandomString(9);
-            us.setPassword(new Md5PwdEncoder().encodePassword(us.getPassword(),salt));
-            //盐渍生成序列号
-            String serialNumber = new Md5PwdEncoder().encodePassword(uuid, salt);
-            us.setSerialNumber(serialNumber);
-            //保存盐渍随机码
-            us.setSalt(salt);
-            us.setIP(ip);
-            us.setAddress(StringUtil.isEmpty(us.getAddress()) ? StringUtil.joinIgnoreEmptyStr(",",addr) : us.getAddress());
-            us.setLastLoginTime(now);
-            us.setCreator("me");
-            us.setCreateTime(now);
-            //持久化
-            userService.insert(us);
+            int countUser = countUser(uuid);
+            if(countUser>0){
+                //账号存在
+                map.put(SysConst.RETURN_CODE, SysConst.OP_FAILD);
+                map.put(SysConst.RETURN_MSG, "此序列号已注册");
+                return map;
+            }else {
+                //注册
+                String ip= ContextUtil.getClientIp();
+                String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
+                //user初始化
+                Date now = new Date();
+                //获取随机码执行盐渍算法
+                String salt= StringUtil.getRandomString(9);
+                us.setPassword(new Md5PwdEncoder().encodePassword(us.getPassword(),salt));
+                //盐渍生成序列号
+                String serialNumber = new Md5PwdEncoder().encodePassword(uuid, salt);
+                us.setSerialNumber(serialNumber);
+                //保存盐渍随机码
+                us.setSalt(salt);
+                us.setIP(ip);
+                us.setAddress(StringUtil.isEmpty(us.getAddress()) ? StringUtil.joinIgnoreEmptyStr(",",addr) : us.getAddress());
+                us.setLastLoginTime(now);
+                us.setCreator(us.getUserName());
+                us.setCreateTime(now);
+                //持久化
+                userService.insert(us);
 
-            us.setSalt("");//不返回salt
+                us.setSalt("");//不返回salt
 
-            //将用户信息写入session
-            ContextUtil.setContextLoginUser( us);
+                //将用户信息写入session
+                ContextUtil.setContextLoginUser( us);
+            }
+        }else{
+            //验证登录
+            List<User> userList = checkUser(uuid, sn);
+            if(userList == null && userList.size() == 0){
+                map.put(SysConst.RETURN_CODE, SysConst.OP_FAILD);
+                map.put(SysConst.RETURN_MSG, "机器码与序列号有误");
+                return map;
+            }else{
+                us = userList.get(0);
+                us.setSalt("");//不返回salt
+            }
+
         }
 
+
         //已注册则添加日志
-        us = userList.size() > 0 ? userList.get(0) : us;
         int logResult = log(us,"用户登录");
         if(logResult > 0){
             map.put("code", SysConst.OP_SUCCESS);//操作成功
             map.put("data", us);//用户信息
 
-        }else
+        }else{
             map.put("code", SysConst.OP_FAILD);//操作失败
+            map.put("messages", "添加日志失败");
+        }
 
         return map;
     }
 
+    /**
+     * 查询用户是否存在
+     * @param uuid
+     * @return
+     */
+    private int countUser(String uuid){
+
+        //查询
+        UserExample example = new UserExample();
+        example.createCriteria().andUuidEqualTo(uuid);
+        return userService.countByExample(example);
+    }
     /**
      * 查询用户是否存在
      * @param uuid
