@@ -1,30 +1,33 @@
 package com.sky.statistics.web.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 //此注解的作用是只检查属性不检查方法，解决Jackson序列化bean时变量名大小写改变的问题
 @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY, getterVisibility= JsonAutoDetect.Visibility.NONE)
-public class User {
+public class User implements Serializable{
     private Long id;
     @NotEmpty(message="{user.username.null}")
     private String userName;
-    @NotEmpty(message="{user.password.null}")
-    @Size(min=8, max=16,message="{user.password.size}")
+//    @NotEmpty(message="{user.password.null}")
+//    @Size(min=8, max=16,message="{user.password.size}")
     private String password;
     private String serialNumber;
-    @NotEmpty(message="{user.imei.null}")
+    @NotEmpty(message="{user.uuid.null}")
     private String uuid;
     private String salt;
     private int state;
-    @Max(value=150,message="{user.age.error}")
+//    @Max(value=150,message="{user.age.error}")
     private int age;
     private String address;
     private String company;
     private String phone;
+    @Email(message = "{user.email.error}")
     private String email;
     private String ip;
     private String client;

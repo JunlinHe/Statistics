@@ -11,6 +11,9 @@ import com.sky.statistics.web.model.UserExample;
 import com.sky.statistics.web.model.UserLog;
 import com.sky.statistics.web.service.UserLogService;
 import com.sky.statistics.web.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -31,6 +34,9 @@ public class UserController {
     private UserService userService;
     @Resource
     private UserLogService userLogService;
+    @Autowired
+    @Qualifier("logTaskExecutor")
+    private TaskExecutor updateTaskExecutor;
 
     /**
      * 查询所有用户
@@ -57,11 +63,16 @@ public class UserController {
      * */
     @RequestMapping(value="/register",method= RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public Map<String,Object> insertUser(@RequestBody @Valid User us,BindingResult result, HttpServletRequest request,HttpServletResponse response)
+    public Map<String,Object> insertUser(@RequestBody @Valid User us,BindingResult result, HttpServletRequest request)
     {
-        //response.setContentType("application/json; charset=UTF-8");
+        //返回对象集合
         Map<String,Object> map = new HashMap<String,Object>();
-        //TODO 如果用户提交了序列号则只记录日志
+        //返回消息集合
+        List<String> msgList = new ArrayList<String>();
+        //用于返回的user
+        User userForReturn = null;
+
+        // 如果用户提交了序列号则只记录日志
         String sn = us.getSerialNumber();
         String uuid = us.getUuid();
 
@@ -77,14 +88,18 @@ public class UserController {
 
                 map.put(SysConst.RETURN_CODE, SysConst.OP_FAILD);
                 map.put(SysConst.RETURN_MSG, errMsgList);
+                map.put(SysConst.RETURN_DATA, null);
                 return map;
             }
 
-            int countUser = countUser(uuid);
+//            int countUser = countUser(uuid);
+            int countUser = 0;
             if(countUser>0){
                 //账号存在
+                msgList.add("此序列号已注册]");
                 map.put(SysConst.RETURN_CODE, SysConst.OP_FAILD);
-                map.put(SysConst.RETURN_MSG, "此序列号已注册");
+                map.put(SysConst.RETURN_MSG, msgList);
+                map.put(SysConst.RETURN_DATA, null);
                 return map;
             }else {
                 //注册
@@ -108,7 +123,8 @@ public class UserController {
                 //持久化
                 userService.insert(us);
 
-                us.setSalt("");//不返回salt
+                userForReturn = us;
+                userForReturn.setSalt("");//不返回salt
 
                 //将用户信息写入session
                 ContextUtil.setContextLoginUser( us);
@@ -116,28 +132,30 @@ public class UserController {
         }else{
             //验证登录
             List<User> userList = checkUser(uuid, sn);
-            if(userList == null && userList.size() == 0){
+            if(userList == null || userList.size() == 0){
+                msgList.add("机器码与序列号有误");
                 map.put(SysConst.RETURN_CODE, SysConst.OP_FAILD);
-                map.put(SysConst.RETURN_MSG, "机器码与序列号有误");
+                map.put(SysConst.RETURN_MSG, msgList);
+                map.put(SysConst.RETURN_DATA, null);
                 return map;
             }else{
                 us = userList.get(0);
-                us.setSalt("");//不返回salt
+                userForReturn = us;
+                userForReturn.setSalt("");//不返回salt
             }
 
         }
 
+        //开启线程添加日志
+        log(us, "用户登录", request);
 
-        //已注册则添加日志
-        int logResult = log(us,"用户登录");
-        if(logResult > 0){
-            map.put("code", SysConst.OP_SUCCESS);//操作成功
-            map.put("data", us);//用户信息
+        //开启线程修改登录信息
+        //updateLoginInfo(us);
 
-        }else{
-            map.put("code", SysConst.OP_FAILD);//操作失败
-            map.put("messages", "添加日志失败");
-        }
+        msgList.add("登录成功");
+        map.put(SysConst.RETURN_CODE, SysConst.OP_SUCCESS);//操作成功
+        map.put(SysConst.RETURN_MSG, msgList);
+        map.put(SysConst.RETURN_DATA, userForReturn);//用户信息
 
         return map;
     }
@@ -155,7 +173,7 @@ public class UserController {
         return userService.countByExample(example);
     }
     /**
-     * 查询用户是否存在
+     * 查询用户机器码与序列号是否一致
      * @param uuid
      * @param sn
      * @return
@@ -175,22 +193,58 @@ public class UserController {
      * @param logInfo
      * @return
      */
-    private int log( User user, String logInfo){
-        String ip= ContextUtil.getClientIp();
-        String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
-        UserLog usl = new UserLog();
+    private void log(final User user,final String logInfo, final HttpServletRequest request){
+        System.out.println("准备插入日志");
+        //开启线程
+        updateTaskExecutor.execute(new Runnable() {
+            public void run() {
+                try {
+                    //TODO 两个insert操作之间的事务提交会有30秒延迟，为什么？
+                    System.out.println("正在插入日志");
+                    String ip = ContextUtil.getIpAddr(request);
+                    String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
+                    UserLog usl = new UserLog();
 
-        usl.setUser(user);
-        usl.setLogType(0);
-        usl.setLogInfo(logInfo);
-        usl.setLogTime(new Date());
-        usl.setIP(ip);
-        usl.setArea(StringUtil.joinIgnoreEmptyStr(",",addr));
-        usl.setMethodName( this.getClass().getSimpleName());
-        usl.setModelName( this.getClass().getName());
+                    usl.setUser(user);
+                    usl.setLogType(0);
+                    usl.setLogInfo(logInfo);
+                    usl.setLogTime(new Date());
+                    usl.setIP(ip);
+                    usl.setArea(StringUtil.joinIgnoreEmptyStr(",", addr));
+                    usl.setMethodName(this.getClass().getSimpleName());
+                    usl.setModelName(this.getClass().getName());
 
-        int i = userLogService.insert(usl);
-        return i;
+                    int i = userLogService.insert(usl);
+                }catch (Exception e){
+                    System.out.println("插入日志异常："+e.getMessage());
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 更改用户登录信息
+     * @param user
+     * @return
+     */
+    private void updateLoginInfo(final User user){
+        System.out.println("准备修改登录时间");
+        //开启线程
+        updateTaskExecutor.execute(new Runnable() {
+            public void run() {
+                try {
+                    System.out.println("正在修改登录时间");
+                    user.setLastLoginTime(new Date());
+                    UserExample example = new UserExample();
+                    example.createCriteria().andIdEqualTo(user.getId());
+                    userService.updateByExample(user, example);
+                }catch (Exception e){
+                    System.out.println("修改登录时间异常："+e.getMessage());
+                }
+            }
+        });
+
     }
 
     /**

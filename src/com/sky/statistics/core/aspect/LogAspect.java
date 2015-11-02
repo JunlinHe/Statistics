@@ -188,7 +188,7 @@ public class LogAspect {
 
     /**
      * 根据切入层获取日志
-     * @param serviceOrController 1：true，2：false
+     * @param serviceOrController true:service, false:Controller
      * @param joinPoint
      * @param e
      */

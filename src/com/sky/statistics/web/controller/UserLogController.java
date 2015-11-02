@@ -10,6 +10,7 @@ import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserLog;
 import com.sky.statistics.web.model.UserLogExample;
 import com.sky.statistics.web.service.UserLogService;
+import com.sky.statistics.web.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,10 @@ public class UserLogController {
 
     @Resource
     private UserLogService userLogService;
+
+    @Resource
+    private UserService userService;
+
     @Resource
     private IUserLogMapper userLogMapper;
     /**
@@ -117,9 +122,12 @@ public class UserLogController {
     /**
      * 记录操作日志
      * */
-    @RequestMapping(value="/insert",method= RequestMethod.POST, consumes = "application/json")
+//    @RequestMapping(value="/insert",method= RequestMethod.POST, consumes = "application/json")
+//    @ResponseBody
+//    public Map<String,Object> insertLog(@RequestBody UserLog usl, HttpServletRequest request)
+    @RequestMapping(value="/insert",method= RequestMethod.POST)
     @ResponseBody
-    public Map<String,Object> insertLog(@RequestBody UserLog usl, HttpServletRequest request)
+    public Map<String,Object> insertLog(UserLog usl, HttpServletRequest request)
     {
         //返回操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
@@ -140,6 +148,10 @@ public class UserLogController {
 
         //持久化
         userLogService.insert(usl);
+
+
+        User us = new User();
+        userService.insert(us);
 
         Long resultID = usl.getId();
         System.out.println("存储返回结果i："+resultID);

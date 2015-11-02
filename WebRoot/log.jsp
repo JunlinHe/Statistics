@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="app/css/style.css">
     <script type="text/javascript" src="app/lib/jquery.js"></script>
     <script type="text/javascript" src="app/lib/jquery.formautofill.min.js"></script>
+    <script type="text/javascript" src="app/js/app.js"></script>
 </head>
 <body>
 
@@ -35,7 +36,7 @@
         <input type="number" id="logInfo" name="logInfo" value="19">
         <br>
         <label for="IP">ip</label>
-        <input type="text" id="IP" name="IP" value="ewrwe">
+        <input type="text" id="IP" name="ip" value="ewrwe">
         <br>
         <label for="methodName">方法名</label>
         <input type="text" id="methodName" name="methodName" value="methodName">

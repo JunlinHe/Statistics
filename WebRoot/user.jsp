@@ -11,9 +11,7 @@
     <title>测试用户相关</title>
 
     <link rel="stylesheet" type="text/css" href="app/css/style.css">
-    <script type="text/javascript" src="app/lib/jquery.js"></script>
-    <script type="text/javascript" src="app/lib/jquery.formautofill.min.js"></script>
-    <script type="text/javascript" src="app/js/app.js"></script>
+
 </head>
 
 <body>
@@ -138,6 +136,10 @@
 
     <div id="deleteState" class="display"></div>
 </div>
+
+<script type="text/javascript" src="app/lib/jquery.js"></script>
+<script type="text/javascript" src="app/lib/jquery.formautofill.min.js"></script>
+<script type="text/javascript" src="app/js/app.js"></script>
 
 <script>
 $(function(){
