@@ -50,6 +50,7 @@ public class LogAspect {
     @Pointcut("@annotation(com.sky.statistics.core.annotation.SystemControllerLog)")
     public  void controllerAspect() {
     }
+
     //////////////////////////////////////service日志层通知//////////////////////////////////////////////////
     /**
      * 环绕通知，在@Before之前开始，在@After之前结束
@@ -251,7 +252,6 @@ public class LogAspect {
 
 
     }
-
 
     /**
      * 获得用户对象
