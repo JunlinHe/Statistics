@@ -79,4 +79,9 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
     public int updateByExample(@Param("record") User record, @Param("example") UserExample example) {
         return userMapper.updateByExample(record, example);
     }
+
+    @Override
+    public int updateByExampleSelective(@Param("record") User record, @Param("example") UserExample example){
+        return userMapper.updateByExampleSelective(record, example);
+    }
 }

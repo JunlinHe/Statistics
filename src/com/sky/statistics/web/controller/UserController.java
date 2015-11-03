@@ -92,8 +92,8 @@ public class UserController {
                 return map;
             }
 
-//            int countUser = countUser(uuid);
-            int countUser = 0;
+            int countUser = countUser(uuid);
+//            int countUser = 0;
             if(countUser>0){
                 //账号存在
                 msgList.add("此序列号已注册]");
@@ -104,7 +104,7 @@ public class UserController {
             }else {
                 //注册
                 String ip= ContextUtil.getClientIp();
-                String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
+                //String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
                 //user初始化
                 Date now = new Date();
                 //获取随机码执行盐渍算法
@@ -115,8 +115,9 @@ public class UserController {
                 us.setSerialNumber(serialNumber);
                 //保存盐渍随机码
                 us.setSalt(salt);
-                us.setIP(ip);
-                us.setAddress(StringUtil.isEmpty(us.getAddress()) ? StringUtil.joinIgnoreEmptyStr(",",addr) : us.getAddress());
+                us.setIp(ip);
+                //us.setAddress(StringUtil.isEmpty(us.getAddress()) ? StringUtil.joinIgnoreEmptyStr(",",addr) : us.getAddress());
+                us.setAddress(us.getAddress());
                 us.setLastLoginTime(now);
                 us.setCreator(us.getUserName());
                 us.setCreateTime(now);
@@ -150,7 +151,7 @@ public class UserController {
         log(us, "用户登录", request);
 
         //开启线程修改登录信息
-        //updateLoginInfo(us);
+        updateLoginInfo(us);
 
         msgList.add("登录成功");
         map.put(SysConst.RETURN_CODE, SysConst.OP_SUCCESS);//操作成功
@@ -209,7 +210,7 @@ public class UserController {
                     usl.setLogType(0);
                     usl.setLogInfo(logInfo);
                     usl.setLogTime(new Date());
-                    usl.setIP(ip);
+                    usl.setIp(ip);
                     usl.setArea(StringUtil.joinIgnoreEmptyStr(",", addr));
                     usl.setMethodName(this.getClass().getSimpleName());
                     usl.setModelName(this.getClass().getName());
@@ -238,7 +239,7 @@ public class UserController {
                     user.setLastLoginTime(new Date());
                     UserExample example = new UserExample();
                     example.createCriteria().andIdEqualTo(user.getId());
-                    userService.updateByExample(user, example);
+                    userService.updateByExampleSelective(user, example);
                 }catch (Exception e){
                     System.out.println("修改登录时间异常："+e.getMessage());
                 }

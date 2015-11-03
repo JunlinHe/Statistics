@@ -1,8 +1,8 @@
 package com.sky.statistics.web.service;
 
 import com.sky.statistics.core.feature.orm.mybatis.Page;
-import com.sky.statistics.web.model.User;
 import com.sky.statistics.core.generic.GenericService;
+import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserExample;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,7 +18,7 @@ public interface UserService extends GenericService<User, Long>{
     int deleteByExample(UserExample example);
 
     int updateByExample(@Param("record") User record, @Param("example") UserExample example);
-
+    int updateByExampleSelective(@Param("record") User record, @Param("example") UserExample example);
     /**
      * 用户验证
      *

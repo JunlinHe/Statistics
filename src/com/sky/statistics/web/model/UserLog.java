@@ -62,11 +62,11 @@ public class UserLog {
         this.logTime = logTime;
     }
 
-    public String getIP() {
+    public String getIp() {
         return ip;
     }
 
-    public void setIP(String ip) {
+    public void setIp(String ip) {
         this.ip = ip;
     }
 

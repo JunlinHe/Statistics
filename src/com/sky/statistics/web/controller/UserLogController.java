@@ -9,6 +9,7 @@ import com.sky.statistics.web.dao.IUserLogMapper;
 import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserLog;
 import com.sky.statistics.web.model.UserLogExample;
+import com.sky.statistics.web.model.vo.ClientVO;
 import com.sky.statistics.web.service.UserLogService;
 import com.sky.statistics.web.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -20,10 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/userlog")
@@ -142,7 +140,7 @@ public class UserLogController {
         //初始化
         String ip = ContextUtil.getIpAddr(request);
         String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
-        usl.setIP(ip);
+        usl.setIp(ip);
         usl.setArea(StringUtil.joinIgnoreEmptyStr(",", addr));
         usl.setLogTime(new Date());
 
@@ -201,6 +199,22 @@ public class UserLogController {
         else
             map.put("code", SysConst.OP_FAILD);//操作失败
 
+        return map;
+    }
+
+    @RequestMapping(value="/client",method= RequestMethod.POST)
+    @ResponseBody
+    public Map<String,Object> select()
+    {
+        Map<String,Object> map = new HashMap<String,Object>();
+        List<String> msgList = new ArrayList<String>();
+
+        List<ClientVO> client = userLogService.selectClient();
+
+        msgList.add("查询成功");
+        map.put(SysConst.RETURN_CODE, SysConst.OP_SUCCESS);//操作成功
+        map.put(SysConst.RETURN_MSG, msgList);
+        map.put(SysConst.RETURN_DATA, client);//终端注册信息
         return map;
     }
 }

@@ -5,6 +5,7 @@ import com.sky.statistics.core.generic.GenericService;
 import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserLog;
 import com.sky.statistics.web.model.UserLogExample;
+import com.sky.statistics.web.model.vo.ClientVO;
 
 import java.util.List;
 
@@ -26,4 +27,10 @@ public interface UserLogService extends GenericService<UserLog, Long>{
      * @return
      */
     List<UserLog> selectByExampleAndPage(Page<UserLog> page, UserLogExample example);
+
+    /**
+     * 统计终端注册情况
+     * @return
+     */
+    List<ClientVO> selectClient();
 }

@@ -365,8 +365,17 @@
 	</select>
 
 
+	<!--查询VO视图-->
 
 
+	<!--统计终端数量-->
+	<resultMap type="ClientVO" id="resultClient">
+		<result column="c_name" property="name" />
+		<result column="c_value" property="value" />
+	</resultMap>
+	<select id="selectClient" resultMap="resultClient">
+		SELECT us.client as c_name, COUNT(*) as c_value FROM tbl_user_log usl,tbl_user us WHERE usl.user_id=us.id GROUP BY us.client;
+	</select>
 
 
 </mapper>

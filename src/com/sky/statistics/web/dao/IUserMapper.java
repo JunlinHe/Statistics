@@ -1,13 +1,13 @@
 package com.sky.statistics.web.dao;
 
-import java.util.List;
-
 import com.sky.statistics.core.feature.orm.mybatis.Page;
 import com.sky.statistics.core.generic.GenericDao;
 import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserExample;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public interface IUserMapper  extends GenericDao<User, Long> {
@@ -28,6 +28,8 @@ public interface IUserMapper  extends GenericDao<User, Long> {
 	List<User> selectByExample(UserExample example);
 
 	int updateByExample(@Param("record") User record, @Param("example") UserExample example);
+
+	int updateByExampleSelective(@Param("record") User record, @Param("example") UserExample example);
 
 	/**
 	 * 用户登录验证查询

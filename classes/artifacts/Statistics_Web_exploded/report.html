@@ -11,12 +11,43 @@
 </head>
 <body>
 
+<div style="width: 50%">
+    <canvas id="canvas" height="450" width="600"></canvas>
+</div>
+
 <script type="text/javascript" src="app/lib/jquery.js"></script>
 <script type="text/javascript" src="app/lib/jquery.formautofill.min.js"></script>
+<script type="text/javascript" src="app/lib/Chart.min.js"></script>
 <script type="text/javascript" src="app/js/app.js"></script>
 <script>
-    $(function(){
+    var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
 
+    var barChartData = {
+        labels : ["1月","2月","3月","4月","5月","6月","7月"],
+        datasets : [
+            {
+                fillColor : "rgba(220,220,220,0.5)",
+                strokeColor : "rgba(220,220,220,0.8)",
+                highlightFill: "rgba(220,220,220,0.75)",
+                highlightStroke: "rgba(220,220,220,1)",
+                data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
+            },
+            {
+                fillColor : "rgba(151,187,205,0.5)",
+                strokeColor : "rgba(151,187,205,0.8)",
+                highlightFill : "rgba(151,187,205,0.75)",
+                highlightStroke : "rgba(151,187,205,1)",
+                data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
+            }
+        ]
+
+    }
+
+    $(function(){
+        var ctx = $("#canvas").get(0).getContext("2d");
+        var myNewChart = new Chart(ctx).Bar(barChartData, {
+            responsive : true
+        });
     });
 </script>
 </body>
