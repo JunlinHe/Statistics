@@ -41,10 +41,10 @@
         <input type="number" id="age" name="age" value="19">
         <br>
         <label for="address">地址</label>
-        <input type="text" id="address" name="address" value="ewrwe">
+        <input type="text" id="address" name="address" value="创维半导体大厦">
         <br>
         <label for="company">公司</label>
-        <input type="text" id="company" name="company" value="sdfeewr">
+        <input type="text" id="company" name="company" value="创维">
         <br>
         <label for="phone">电话</label>
         <input type="number" id="phone" name="phone" value="18500000000">
@@ -56,7 +56,7 @@
         <input type="text" id="ip" name="ip" value="127.0.0.1">
         <br>
         <label for="client">客户端类型</label>
-        <input type="text" id="client" name="client" value="1">
+        <input type="text" id="client" name="client" value="PC端">
         <br>
         <label for="headURL">头像</label>
         <input type="text" id="headURL" name="headURL" value="234">
@@ -96,7 +96,7 @@
         <input type="text"  name="uuid" >
         <br>
         <label for="age">年龄</label>
-        <input type="number"  name="age" >
+        <input type="number"  name="age" value="0">
         <br>
         <label for="address">地址</label>
         <input type="text"  name="address" >
@@ -105,7 +105,7 @@
         <input type="text"  name="company" >
         <br>
         <label for="phone">电话</label>
-        <input type="number"  name="phone" >
+        <input type="text"  name="phone" >
         <br>
         <label for="email">email</label>
         <input type="email"  name="email">
@@ -180,11 +180,11 @@ $(function(){
     });
 
     $('#getData').on('click',function(){
-        var usID = $('#updateID').val();
-
+//        var usID = $('#updateID').val();
+        var data = $('#updateForm').serialize();
         $.ajax({
             url:'user/select',
-            data:{id:usID},
+            data:data+"&pageSize=5&pageNo=1",
             dataType:'json',
             type:'post',
             //contentType:'application/json;charset=UTF-8',

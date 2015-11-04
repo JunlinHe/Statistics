@@ -2,6 +2,7 @@ package com.sky.statistics.web.controller;
 
 import com.sky.statistics.core.annotation.SystemControllerLog;
 import com.sky.statistics.core.constant.SysConst;
+import com.sky.statistics.core.constant.SysContent;
 import com.sky.statistics.core.feature.encoder.Md5PwdEncoder;
 import com.sky.statistics.core.feature.orm.mybatis.Page;
 import com.sky.statistics.core.util.ContextUtil;
@@ -9,6 +10,7 @@ import com.sky.statistics.core.util.StringUtil;
 import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserExample;
 import com.sky.statistics.web.model.UserLog;
+import com.sky.statistics.web.model.UserLogExample;
 import com.sky.statistics.web.service.UserLogService;
 import com.sky.statistics.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +71,6 @@ public class UserController {
         Map<String,Object> map = new HashMap<String,Object>();
         //返回消息集合
         List<String> msgList = new ArrayList<String>();
-        //用于返回的user
-        User userForReturn = null;
 
         // 如果用户提交了序列号则只记录日志
         String sn = us.getSerialNumber();
@@ -124,11 +124,6 @@ public class UserController {
                 //持久化
                 userService.insert(us);
 
-                userForReturn = us;
-                userForReturn.setSalt("");//不返回salt
-
-                //将用户信息写入session
-                ContextUtil.setContextLoginUser( us);
             }
         }else{
             //验证登录
@@ -141,14 +136,18 @@ public class UserController {
                 return map;
             }else{
                 us = userList.get(0);
-                userForReturn = us;
-                userForReturn.setSalt("");//不返回salt
             }
 
         }
 
+        //将用户信息写入session
+        ContextUtil.setContextLoginUser( us);
+        //修改登录时间与IP
+        us.setLastLoginTime(new Date());
+        us.setIp(ContextUtil.getClientIp());
+
         //开启线程添加日志
-        log(us, "用户登录", request);
+        log(us, "用户登录");
 
         //开启线程修改登录信息
         updateLoginInfo(us);
@@ -156,7 +155,7 @@ public class UserController {
         msgList.add("登录成功");
         map.put(SysConst.RETURN_CODE, SysConst.OP_SUCCESS);//操作成功
         map.put(SysConst.RETURN_MSG, msgList);
-        map.put(SysConst.RETURN_DATA, userForReturn);//用户信息
+        map.put(SysConst.RETURN_DATA, us);//用户信息
 
         return map;
     }
@@ -194,15 +193,16 @@ public class UserController {
      * @param logInfo
      * @return
      */
-    private void log(final User user,final String logInfo, final HttpServletRequest request){
+    private void log(final User user,final String logInfo){
         System.out.println("准备插入日志");
+        //请求的IP
+        final String ip = ContextUtil.getClientIp();
         //开启线程
         updateTaskExecutor.execute(new Runnable() {
             public void run() {
                 try {
-                    //TODO 两个insert操作之间的事务提交会有30秒延迟，为什么？
                     System.out.println("正在插入日志");
-                    String ip = ContextUtil.getIpAddr(request);
+//                    String ip = ContextUtil.getIpAddr(request);
                     String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
                     UserLog usl = new UserLog();
 
@@ -236,7 +236,7 @@ public class UserController {
             public void run() {
                 try {
                     System.out.println("正在修改登录时间");
-                    user.setLastLoginTime(new Date());
+                    //user.setLastLoginTime(new Date());
                     UserExample example = new UserExample();
                     example.createCriteria().andIdEqualTo(user.getId());
                     userService.updateByExampleSelective(user, example);
@@ -289,12 +289,33 @@ public class UserController {
     {
         //返回操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
-        //TODO 测试跳转
 
+        int pageNo = Integer.parseInt(SysContent.getRequest().getParameter("pageNo"));
+        int pageSize = Integer.parseInt(SysContent.getRequest().getParameter("pageSize"));
         //查询
-        Page<User> page = new Page<User>(1, 1);
+        Page<User> page = new Page<User>(pageNo, pageSize);
         UserExample example = new UserExample();
-        example.createCriteria().andIdEqualTo(us.getId());
+        //查询规则
+        UserExample.Criteria criteria = example.createCriteria();
+
+        //封装查询条件
+        if(us.getId() != null )
+            criteria.andIdEqualTo(us.getId());
+        if( !StringUtil.isEmpty( us.getUserName() ) )
+            criteria.andUsernameEqualTo(us.getUserName());
+        if( !StringUtil.isEmpty( us.getUuid() ) )
+            criteria.andUuidEqualTo(us.getUuid());
+        if( !StringUtil.isEmpty( us.getSerialNumber() ) )
+            criteria.andSNEqualTo(us.getSerialNumber());
+        if( us.getState() != 0 )
+            criteria.andStateEqualTo(us.getState());
+        if( !StringUtil.isEmpty( us.getPhone() ) )
+            criteria.andPhoneEqualTo(us.getPhone());
+        if( !StringUtil.isEmpty( us.getEmail() ) )
+            criteria.andEmailEqualTo(us.getEmail());
+//        if( us.getCreateTime() != null )
+//            criteria.andCreateTimeEqualTo(us.getCreateTime());
+
         final List<User> users = userService.selectByExampleAndPage(page, example);
 
         if(users.size()>0){

@@ -374,7 +374,7 @@
 		<result column="c_value" property="value" />
 	</resultMap>
 	<select id="selectClient" resultMap="resultClient">
-		SELECT us.client as c_name, COUNT(*) as c_value FROM tbl_user_log usl,tbl_user us WHERE usl.user_id=us.id GROUP BY us.client;
+		SELECT us.client as c_name, COUNT(*) as c_value FROM tbl_user us GROUP BY us.client;
 	</select>
 
 

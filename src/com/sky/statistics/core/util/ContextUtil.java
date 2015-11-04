@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sky.statistics.core.constant.SysConst;
+import com.sky.statistics.core.constant.SysContent;
 import com.sky.statistics.web.model.User;
 import org.apache.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
@@ -152,7 +153,9 @@ public class ContextUtil {
 	{
 		try
 		{
-			HttpServletRequest request= ((ServletRequestAttributes)getRequestAttributes()).getRequest();
+//			HttpServletRequest request= ((ServletRequestAttributes)getRequestAttributes()).getRequest();
+			//TODO 试用ThreadLocal获取request
+			HttpServletRequest request = SysContent.getRequest();
 			return request;
 		}catch (Exception e) {
 		}
@@ -170,7 +173,9 @@ public class ContextUtil {
 	{
 		try
 		{
-			HttpServletResponse response= ((ServletWebRequest)getRequestAttributes()).getResponse();
+//			HttpServletResponse response= ((ServletWebRequest)getRequestAttributes()).getResponse();
+			//TODO 试用ThreadLocal获取response
+			HttpServletResponse response = SysContent.getResponse();
 			return response;
 		}catch (Exception e) {
 			logger.error("获取HttpServletResponse失败!");
@@ -241,15 +246,18 @@ public class ContextUtil {
 	@SuppressWarnings("unchecked")
 	public static String getClientIp()
 	{
-		Map<String,Object> map=ThreadLocalUtil.get(Map.class);
-		if(map!=null)
-		{
-			if(map.containsKey(SysConst.IP))
-			{
-				return String.valueOf(map.get(SysConst.IP));
-			}
-		}
-		return getIpAddr(getHttpServletRequest());
+//		Map<String,Object> map=ThreadLocalUtil.get(Map.class);
+//		if(map!=null)
+//		{
+//			if(map.containsKey(SysConst.IP))
+//			{
+//				return String.valueOf(map.get(SysConst.IP));
+//			}
+//		}
+//		return getIpAddr(getHttpServletRequest());
+		//TODO 暂时生成随机IP测试
+		System.out.println("获取随机IP暂时替代ThreadLocal中的IP："+getIpAddr(getHttpServletRequest()));
+		return StringUtil.getRandomIp();
 	}
 	
 

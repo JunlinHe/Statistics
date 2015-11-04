@@ -97,4 +97,14 @@
         <servlet-name>DruidStatView</servlet-name>
         <url-pattern>/druid/*</url-pattern>
     </servlet-mapping>
+
+    <!--content过滤器，将request、response、session存入ThreadLocal-->
+    <filter>
+        <filter-name>contentFilter</filter-name>
+        <filter-class>com.sky.statistics.core.filter.GetContent</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>contentFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>

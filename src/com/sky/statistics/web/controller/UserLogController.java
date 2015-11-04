@@ -138,7 +138,7 @@ public class UserLogController {
         System.out.println("用户id："+usl.getUser().getId());
 
         //初始化
-        String ip = ContextUtil.getIpAddr(request);
+        String ip = ContextUtil.getClientIp();
         String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
         usl.setIp(ip);
         usl.setArea(StringUtil.joinIgnoreEmptyStr(",", addr));

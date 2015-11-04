@@ -33,7 +33,7 @@
         <input type="text" id="userSerialNum" name="userSerialNum" value="123123123">
         <br>
         <label for="logInfo">日志信息</label>
-        <input type="number" id="logInfo" name="logInfo" value="19">
+        <input type="text" id="logInfo" name="logInfo" value="19">
         <br>
         <label for="IP">ip</label>
         <input type="text" id="IP" name="ip" value="ewrwe">

@@ -2,6 +2,7 @@ package com.sky.statistics.core.aspect;
 
 import com.sky.statistics.core.annotation.SystemControllerLog;
 import com.sky.statistics.core.annotation.SystemServiceLog;
+import com.sky.statistics.core.constant.SysContent;
 import com.sky.statistics.core.util.ContextUtil;
 import com.sky.statistics.core.util.StringUtil;
 import com.sky.statistics.web.model.User;
@@ -16,8 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Date;
 
@@ -191,29 +197,29 @@ public class LogAspect {
      * @param e
      */
     private void log(final boolean serviceOrController,final JoinPoint joinPoint,final Throwable e){
+
+        //请求的IP
+        final String ip = ContextUtil.getClientIp();
         //开启日志线程
-        logTaskExecutor.execute(new Runnable()
-        {
-            public void run()
-            {
+        logTaskExecutor.execute(new Runnable() {
+            public void run() {
                 String logInfo = null;
                 //获取用户请求方法的参数并序列化为JSON格式字符串
                 String params = "";
                 try {
-                    logInfo = serviceOrController?getServiceMthodDescription(joinPoint):getControllerMethodDescription(joinPoint);
+                    logInfo = serviceOrController ? getServiceMthodDescription(joinPoint) : getControllerMethodDescription(joinPoint);
 
-                    if (joinPoint.getArgs() !=  null && joinPoint.getArgs().length > 0) {
-                        for ( int i = 0; i < joinPoint.getArgs().length; i++) {
+                    if (joinPoint.getArgs() != null && joinPoint.getArgs().length > 0) {
+                        for (int i = 0; i < joinPoint.getArgs().length; i++) {
                             params += joinPoint.getArgs()[i] + ";";
                         }
                     }
-
                     //HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
                     //HttpSession session = request.getSession();
                     //读取session中的用户
                     //User user = (User) session.getAttribute(WebConstants.CURRENT_USER);
                     //请求的IP
-                    String ip = ContextUtil.getClientIp();
+                    //String ip = ContextUtil.getClientIp();
                     String[] addr = ContextUtil.getAddressByIP(ip);//通过request获取IP再获取IP所在地
 
                     UserLog usl = new UserLog();
@@ -222,26 +228,25 @@ public class LogAspect {
                     usl.setLogInfo(logInfo);
                     usl.setLogTime(new Date());
                     usl.setIp(ip);
-                    usl.setArea(StringUtil.joinIgnoreEmptyStr(",",addr));
-                    usl.setMethodName( joinPoint.getSignature().getName());
+                    usl.setArea(StringUtil.joinIgnoreEmptyStr(",", addr));
+                    usl.setMethodName(joinPoint.getSignature().getName());
                     usl.setModelName(joinPoint.getTarget().getClass().getName());
                     usl.setLogType(0);
-                    if(e!=null){//设置异常日志
+                    if (e != null) {//设置异常日志
                         usl.setLogType(1);
                         usl.setErrCode(e.getClass().getName());
                         usl.setErrInfo(e.getMessage());
                     }
                     userLogService.insert(usl);
 
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     //记录本地异常日志
                     logger.error("==异常通知异常==");
                     logger.error("异常信息:{}", e.getMessage());
                 }
 
                 /*==========记录本地异常日志==========*/
-                if(e!=null)
+                if (e != null)
                     logger.error("异常方法:{}异常代码:{}异常信息:{}参数:{}", joinPoint.getTarget().getClass().getName() + joinPoint.getSignature().getName(), e.getClass().getName(), e.getMessage(), params);
 
             }//线程结束

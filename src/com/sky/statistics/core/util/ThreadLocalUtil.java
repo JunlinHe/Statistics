@@ -42,7 +42,7 @@ public class ThreadLocalUtil {
 	}
 	
 	/**
-	 * 移除ThreadLocal中数据
+	 * 移除ThreadLocal中数据，线程结束会自动回收，亦可手动调用
 	 * @author 胡礼波
 	 * 2014-9-22 下午1:49:47
 	 */
