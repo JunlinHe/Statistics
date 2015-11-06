@@ -212,9 +212,9 @@ public class UserLogController {
         List<ClientVO> client = userLogService.selectClient();
 
         msgList.add("查询成功");
-        map.put(SysConst.RETURN_CODE, SysConst.OP_SUCCESS);//操作成功
-        map.put(SysConst.RETURN_MSG, msgList);
-        map.put(SysConst.RETURN_DATA, client);//终端注册信息
+        map.put(SysConst.RETURN_KEY_CODE, SysConst.OP_SUCCESS);//操作成功
+        map.put(SysConst.RETURN_KEY_MSG, msgList);
+        map.put(SysConst.RETURN_KEY_DATA, client);//终端注册信息
         return map;
     }
 }

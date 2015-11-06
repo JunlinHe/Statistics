@@ -33,9 +33,13 @@ public class SysConst {
 	public static String picServer=null;							//图片服务器地址
 
 	//返回json键
-	public static String RETURN_CODE = "code";
-	public static String RETURN_MSG = "messages";
-	public static String RETURN_DATA = "data";
+	public static String RETURN_KEY_CODE = "code";
+	public static String RETURN_KEY_MSG = "messages";
+	public static String RETURN_KEY_DATA = "data";
+	public static String RETURN_KEY_TOTAL = "total";
+
+	public static String OP_SUCCESS_MSG = "操作成功";
+	public static String OP_FAILD_MSG = "操作失败";
 }
 
 

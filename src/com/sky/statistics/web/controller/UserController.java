@@ -1,8 +1,8 @@
 package com.sky.statistics.web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sky.statistics.core.annotation.SystemControllerLog;
 import com.sky.statistics.core.constant.SysConst;
-import com.sky.statistics.core.constant.SysContent;
 import com.sky.statistics.core.feature.encoder.Md5PwdEncoder;
 import com.sky.statistics.core.feature.orm.mybatis.Page;
 import com.sky.statistics.core.util.ContextUtil;
@@ -10,7 +10,7 @@ import com.sky.statistics.core.util.StringUtil;
 import com.sky.statistics.web.model.User;
 import com.sky.statistics.web.model.UserExample;
 import com.sky.statistics.web.model.UserLog;
-import com.sky.statistics.web.model.UserLogExample;
+import com.sky.statistics.web.model.vo.SelectVO;
 import com.sky.statistics.web.service.UserLogService;
 import com.sky.statistics.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -86,9 +87,9 @@ public class UserController {
                     errMsgList.add(error.getDefaultMessage());
                 }
 
-                map.put(SysConst.RETURN_CODE, SysConst.OP_FAILD);
-                map.put(SysConst.RETURN_MSG, errMsgList);
-                map.put(SysConst.RETURN_DATA, null);
+                map.put(SysConst.RETURN_KEY_CODE, SysConst.OP_FAILD);
+                map.put(SysConst.RETURN_KEY_MSG, errMsgList);
+                map.put(SysConst.RETURN_KEY_DATA, null);
                 return map;
             }
 
@@ -97,9 +98,9 @@ public class UserController {
             if(countUser>0){
                 //账号存在
                 msgList.add("此序列号已注册]");
-                map.put(SysConst.RETURN_CODE, SysConst.OP_FAILD);
-                map.put(SysConst.RETURN_MSG, msgList);
-                map.put(SysConst.RETURN_DATA, null);
+                map.put(SysConst.RETURN_KEY_CODE, SysConst.OP_FAILD);
+                map.put(SysConst.RETURN_KEY_MSG, msgList);
+                map.put(SysConst.RETURN_KEY_DATA, null);
                 return map;
             }else {
                 //注册
@@ -130,9 +131,9 @@ public class UserController {
             List<User> userList = checkUser(uuid, sn);
             if(userList == null || userList.size() == 0){
                 msgList.add("机器码与序列号有误");
-                map.put(SysConst.RETURN_CODE, SysConst.OP_FAILD);
-                map.put(SysConst.RETURN_MSG, msgList);
-                map.put(SysConst.RETURN_DATA, null);
+                map.put(SysConst.RETURN_KEY_CODE, SysConst.OP_FAILD);
+                map.put(SysConst.RETURN_KEY_MSG, msgList);
+                map.put(SysConst.RETURN_KEY_DATA, null);
                 return map;
             }else{
                 us = userList.get(0);
@@ -153,9 +154,9 @@ public class UserController {
         updateLoginInfo(us);
 
         msgList.add("登录成功");
-        map.put(SysConst.RETURN_CODE, SysConst.OP_SUCCESS);//操作成功
-        map.put(SysConst.RETURN_MSG, msgList);
-        map.put(SysConst.RETURN_DATA, us);//用户信息
+        map.put(SysConst.RETURN_KEY_CODE, SysConst.OP_SUCCESS);//操作成功
+        map.put(SysConst.RETURN_KEY_MSG, msgList);
+        map.put(SysConst.RETURN_KEY_DATA, us);//用户信息
 
         return map;
     }
@@ -283,15 +284,28 @@ public class UserController {
     /**
      * 查询用户信息
      * */
-    @RequestMapping(value="/select",method= RequestMethod.POST)
+    @RequestMapping(value="/select",method= RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public Map<String,Object> selectUserInfo(User us)
+    public Map<String,Object> selectUserInfo(@RequestBody SelectVO selectVO) throws IOException
     {
         //返回操作状态码
         Map<String,Object> map = new HashMap<String,Object>();
 
-        int pageNo = Integer.parseInt(SysContent.getRequest().getParameter("pageNo"));
-        int pageSize = Integer.parseInt(SysContent.getRequest().getParameter("pageSize"));
+        User us = new User();
+
+        String filter = selectVO.getFilter();
+
+        if(!StringUtil.isEmpty(filter)){
+            ObjectMapper mapper = new ObjectMapper();
+            us = mapper.readValue(filter, User.class);
+        }else//如果filter为空则查询用户名
+            us.setUserName(selectVO.getSearchText());
+
+        int pageNo = selectVO.getPageNumber();
+        int pageSize = selectVO.getPageSize();
+
+        String sort = selectVO.getSortName();
+        String sortOrder = selectVO.getSortOrder();
         //查询
         Page<User> page = new Page<User>(pageNo, pageSize);
         UserExample example = new UserExample();
@@ -302,7 +316,7 @@ public class UserController {
         if(us.getId() != null )
             criteria.andIdEqualTo(us.getId());
         if( !StringUtil.isEmpty( us.getUserName() ) )
-            criteria.andUsernameEqualTo(us.getUserName());
+            criteria.andUsernameLike("%" + us.getUserName() + "%");
         if( !StringUtil.isEmpty( us.getUuid() ) )
             criteria.andUuidEqualTo(us.getUuid());
         if( !StringUtil.isEmpty( us.getSerialNumber() ) )
@@ -315,14 +329,21 @@ public class UserController {
             criteria.andEmailEqualTo(us.getEmail());
 //        if( us.getCreateTime() != null )
 //            criteria.andCreateTimeEqualTo(us.getCreateTime());
+        if( !StringUtil.isEmpty( sortOrder ) )
+            example.setOrderByClause(sort+" "+sortOrder);
 
         final List<User> users = userService.selectByExampleAndPage(page, example);
 
         if(users.size()>0){
-            map.put("code", SysConst.OP_SUCCESS);//操作成功
-            map.put("data", users);//操作成功
+            map.put(SysConst.RETURN_KEY_CODE, SysConst.OP_SUCCESS);
+            map.put(SysConst.RETURN_KEY_MSG, SysConst.OP_SUCCESS_MSG);
+            map.put(SysConst.RETURN_KEY_DATA, users);
+            map.put(SysConst.RETURN_KEY_TOTAL, page.getTotalCount());//获取所得记录总数
         }else{
-            map.put("code", SysConst.OP_FAILD);//操作失败
+            map.put(SysConst.RETURN_KEY_CODE, SysConst.OP_FAILD);
+            map.put(SysConst.RETURN_KEY_MSG, "没有数据");
+            map.put(SysConst.RETURN_KEY_DATA, "");
+            map.put(SysConst.RETURN_KEY_TOTAL, 0);//获取所得记录总数
         }
 
 

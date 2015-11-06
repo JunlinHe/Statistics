@@ -18,20 +18,35 @@
             <i class="glyphicon glyphicon-trash"></i>
         </button>
     </div>
-
+    <div class="form-inline" role="form">
+        <div class="form-group">
+            <span>Offset: </span>
+            <input name="offset" class="form-control w70" type="number" value="0">
+        </div>
+        <div class="form-group">
+            <span>Limit: </span>
+            <input name="limit" class="form-control w70" type="number" value="5">
+        </div>
+        <div class="form-group">
+            <input name="search" class="form-control" type="text" placeholder="Search">
+        </div>
+        <button id="ok" type="submit" class="btn btn-default">OK</button>
+    </div>
 </div>
 <table id="usermng_table">
 </table>
 <script>
+    var $table = $('#usermng_table'),
+            btObj,
+            $remove = $('#delete_row'),
+            selections = [];
+
     $(function(){
-        var $table = $('#usermng_table'),
-                $remove = $('#delete_row'),
-                selections = [];
 
         /*bootstrap-table 本地数据*/
         //表格字段定义
         var table_colums=[
-            {field: 'state',checkbox: true,align: 'center',valign: 'middle'},
+            {field: 'check',checkbox: true,align: 'center',valign: 'middle'},
             {title: '序号',field: 'id',align: 'center',valign: 'middle',sortable: true},
             {
                 title: '姓名',field: 'userName',align: 'center',valign: 'middle',sortable: true,
@@ -73,8 +88,17 @@
                 }
             },
             {title: '机器码',field: 'uuid',align: 'center',valign: 'middle',sortable: true},
+            {title: '序列号',field: 'serialNumber',align: 'center',valign: 'middle',sortable: true},
+            {title: '状态',field: 'state',checkbox: false,align: 'center',valign: 'middle',sortable: true},
+            {title: '地址',field: 'address',align: 'center',valign: 'middle',sortable: true},
+            {title: '公司',field: 'company',align: 'center',valign: 'middle',sortable: true},
+            {title: '电话',field: 'phone',align: 'center',valign: 'middle',sortable: true},
+            {title: 'email',field: 'email',align: 'center',valign: 'middle',sortable: true},
+            {title: 'IP',field: 'ip',align: 'center',valign: 'middle',sortable: true},
+            {title: '客户端',field: 'client',align: 'center',valign: 'middle',sortable: true},
+            {title: '最后登录时间',field: 'lastLoginTime',align: 'center',valign: 'middle',sortable: true},
             {
-                title: '备注',field: 'dsc',align: 'center',valign: 'middle',sortable: true,
+                title: '备注',field: 'dsc',align: 'center',valign: 'middle',
                 editable: {
                     type: 'textarea',
                     title: '修改备注',
@@ -99,49 +123,67 @@
                 events: operateEvents,
                 formatter: operateFormatter
             }
-        ], table_data=[
-            {'id':'1','name':'张一','age':25,'gender':1,'desc':'哈哈'},
-            {'id':'2','name':'张二','age':24,'gender':1,'desc':'哈哈'},
-            {'id':'3','name':'张三','age':23,'gender':1,'desc':'哈哈'},
-            {'id':'4','name':'张四','age':22,'gender':1,'desc':'哈哈'},
-            {'id':'5','name':'张五','age':21,'gender':1,'desc':'哈哈'},
-            {'id':'6','name':'张六','age':20,'gender':1,'desc':'哈哈'},
-            {'id':'7','name':'张七','age':19,'gender':1,'desc':'哈哈'},
-            {'id':'8','name':'张八','age':18,'gender':1,'desc':'哈哈'},
-            {'id':'9','name':'张九','age':17,'gender':1,'desc':'哈哈'},
-            {'id':'10','name':'张十','age':16,'gender':1,'desc':'哈哈'},
-            {'id':'11','name':'张十一','age':15,'gender':1,'desc':'哈哈'},
-            {'id':'12','name':'张十二','age':14,'gender':1,'desc':'哈哈'}
         ];
 
 
-        $table.bootstrapTable({
+        btObj=$table.bootstrapTable({
             //classes:'',
             clickToSelect:true,
             columns:table_colums,
             //data:table_data,
             toolbar:'#usermng_toolbar',
-            sidePagination: 'server', // client or server
+            sidePagination: 'server', // client or server 分页方式是服务端还是本地
             //totalRows: 0, // server side need to set
 
-            method: 'get',
+            method: 'post',
             url: '/user/select',
             //ajax: undefined,
-            cache: true,
-            contentType: 'application/json',
-            dataType: 'json',
+            //cache: true,
+            //contentType: 'application/json',
+            //dataType: 'json',
+            queryParamsType: '',//默认limit 开启RESTFul 风格的分页参数
+            queryParams:function(params){
+                //ajax提交参数Object {search: undefined, sort: undefined, order: "asc", limit: 5, offset: 0}
+                //Object {pageSize: 5, pageNumber: 1, searchText: undefined, sortName: undefined, sortOrder: "asc"…}
+                out(params);
+                //params.searchText = "改好";
+                //params.sortName = 'id';
+                return params;
+            },
+            //ajaxOptions:'',//ajax参数
 
             pagination: true,
             pageSize: 5,
             pageList: [5, 10, 50, 100],
             idField:'id',//id字段
             search: true,
+            searchTimeOut:1000,//自动搜索时间
+            strictSearch:true,
+            onSearch:function(){
+                console.log("啦啦啦啦")
+            },
             showColumns: true,
             showRefresh: true,
             showToggle: true,//显示切换卡片列表
             showExport: true,
             exportTypes: ['json', 'xml', 'txt', 'excel', 'doc', 'powerpoint', 'pdf'],
-            striped:true,
+
+            advancedSearch:true,//高级搜索
+            formatAdvancedSearch: function() {
+                return '高级搜索';
+            },
+            formatAdvancedCloseButton: function() {
+                return "关闭";
+            },
+            onColumnAdvancedSearch: function (field, text) {
+                console.log(field);
+                console.log(text);
+                return false;
+            },
+
+            striped: true,//条纹分割行
+            resizable:true,//列可改变大小
+            headerOnly:true,//只有表头可拖拽
             responseHandler:responseHandler
 
         }).on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table',function(){
@@ -174,9 +216,10 @@
 
         //处理服务器返回的 嵌套的json数据，例如只要json中的某一字段值做表格数据
         function responseHandler(res) {
-            alert(res);
+            console.log("返回数据")
+            res.rows =res.data;
             $.each(res.rows, function (i, row) {
-                row.state = $.inArray(row.id, selections) !== -1;
+                row.check = $.inArray(row.id, selections) !== -1;
             });
             return res;
         }

@@ -59,8 +59,8 @@ var DEBUG_LEVEL = true,
 function out(msg){
     if(!DEBUG_LEVEL)
         return false;
-    var object=event.srcElement;
-    console.warn('<'+object.title+'>'+new Date().Format("yyyy-MM-dd hh:mm:ss")+':');
+    //var object=event.srcElement;
+    //console.warn('<'+object.title+'>'+new Date().Format("yyyy-MM-dd hh:mm:ss")+':');
     console.log('↓↓↓↓');
     console.log(msg);
 }

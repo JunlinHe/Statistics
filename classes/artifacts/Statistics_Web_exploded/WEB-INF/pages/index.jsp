@@ -56,6 +56,10 @@
     <script type="text/javascript" src="/app/lib/bootstrap-table/extensions/editable/bootstrap-editable.js"></script>
     <script type="text/javascript" src="/app/lib/bootstrap-table/extensions/export/bootstrap-table-export.js"></script>
     <script type="text/javascript" src="/app/lib/bootstrap-table/extensions/export/tableExport.js"></script>
+    <script type="text/javascript" src="/app/lib/bootstrap-table/extensions/toolbar/bootstrap-table-toolbar.js"></script>
+    <script type="text/javascript" src="/app/lib/bootstrap-table/extensions/resizable/colResizable-1.5.source.js"></script>
+    <script type="text/javascript" src="/app/lib/bootstrap-table/extensions/resizable/bootstrap-table-resizable.js"></script>
+
 
     <!--<script src="http://www.fuelcdn.com/fuelux/3.7.3/js/fuelux.min.js"></script>-->
     <script type="text/javascript" src="/app/lib/fuelux/js/tree.js"></script>
