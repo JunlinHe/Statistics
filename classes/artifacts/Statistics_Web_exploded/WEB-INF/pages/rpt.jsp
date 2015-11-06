@@ -15,7 +15,7 @@
   <title>报表</title>
 
   <link rel="stylesheet" type="text/css" href="/app/lib/jqPlot/jquery.jqplot.min.css" />
-  <link rel="stylesheet" type="text/css" href="/app/css/rpt.css" />
+  <link rel="stylesheet" type="text/css" href="/app/system/css/rpt.css" />
 </head>
 <body>
 <div id="info1"></div>

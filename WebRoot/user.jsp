@@ -10,7 +10,7 @@
 <head>
     <title>测试用户相关</title>
 
-    <link rel="stylesheet" type="text/css" href="app/css/style.css">
+    <link rel="stylesheet" type="text/css" href="app/comment/css/style.css">
 
 </head>
 
@@ -139,7 +139,7 @@
 
 <script type="text/javascript" src="app/lib/jquery.js"></script>
 <script type="text/javascript" src="app/lib/jquery.formautofill.min.js"></script>
-<script type="text/javascript" src="app/js/app.js"></script>
+<script type="text/javascript" src="app/comment/js/app.js"></script>
 
 <script>
 $(function(){
