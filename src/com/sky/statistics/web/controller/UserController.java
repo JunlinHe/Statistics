@@ -97,7 +97,7 @@ public class UserController {
 //            int countUser = 0;
             if(countUser>0){
                 //账号存在
-                msgList.add("此序列号已注册]");
+                msgList.add("此序列号已注册");
                 map.put(SysConst.RETURN_KEY_CODE, SysConst.OP_FAILD);
                 map.put(SysConst.RETURN_KEY_MSG, msgList);
                 map.put(SysConst.RETURN_KEY_DATA, null);
@@ -130,7 +130,7 @@ public class UserController {
             //验证登录
             List<User> userList = checkUser(uuid, sn);
             if(userList == null || userList.size() == 0){
-                msgList.add("机器码与序列号有误");
+                msgList.add("机器码或序列号有误");
                 map.put(SysConst.RETURN_KEY_CODE, SysConst.OP_FAILD);
                 map.put(SysConst.RETURN_KEY_MSG, msgList);
                 map.put(SysConst.RETURN_KEY_DATA, null);

@@ -24,18 +24,19 @@ var DEBUG_LEVEL = true,
     /**
      * bootstrap ajaxTab切换
      * tab中的a标签链接必须为tab-content的指向的页面路径
-     * @param obj
+     * @param option
      */
     $.fn.ajaxTab=function(option){
         var _option = $.extend({
-            modular:''
+            modular:'',//请求模块名称
+            cache:true//是否缓存tab-content
         },option);
         out(_option);
 
         $(this).on('shown.bs.tab', function (e) {
             var target = $(e.target).attr("href") // activated tab
-            var _url = _option.modular==='' ? '/' + target.substr(1) : '/' + _option.modular + '/' + target.substr(1);
-            if ($(target).is(':empty')) {
+            var _url = _option.modular==='' ? target.substr(1) : _option.modular + '/' + target.substr(1);
+            if ( _option.cache ? $(target).is(':empty') : true) {
                 $.ajax({
                     type: "GET",
                     url: _url,
@@ -117,6 +118,7 @@ $(function(){
 
     //ajax tab 切换
     $("#indexTabs").ajaxTab({
-        modular:''
+        modular:'',
+        cache:false
     });
 });

@@ -14,7 +14,7 @@
     <context:component-scan base-package="com.sky.statistics.web.controller"/>
 
     <!-- 会自动注册DefaultAnnotationHandlerMapping与AnnotationMethodHandlerAdapter 两个bean,是spring MVC为@Controllers分发请求所必须的 -->
-    <!-- 指定自己定义的validator 指点日期转换conversionService-->
+    <!-- 指定自己定义的validator 指定自定义的日期转换类conversionService-->
     <mvc:annotation-driven validator="validator" conversion-service="conversionService">
         <!--@ResponseBody return json日期格式化配置-->
         <mvc:message-converters >

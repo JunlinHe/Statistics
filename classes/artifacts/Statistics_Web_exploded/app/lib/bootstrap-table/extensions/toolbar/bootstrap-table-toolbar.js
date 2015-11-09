@@ -70,7 +70,7 @@
             $("body").append($(vModal));
 
             var vFormAvd = createFormAvd(pColumns, searchText, that),
-                timeoutId = 0;;
+                timeoutId = 0;
 
             $('#avdSearchModalContent').append(vFormAvd.join(''));
 
@@ -225,6 +225,7 @@
     };
 
     BootstrapTable.prototype.onColumnAdvancedSearch = function (event) {
+
         var text = $.trim($(event.currentTarget).val());
         var $field = $(event.currentTarget)[0].id;
 
@@ -238,7 +239,8 @@
         }
 
         this.options.pageNumber = 1;
-        this.onSearch(event);
+        //TODO 触发onSearch会造成两次查询，这里先注释，后期解决
+        //this.onSearch(event);
         this.updatePagination();
         this.trigger('column-advanced-search', $field, text);
     };
